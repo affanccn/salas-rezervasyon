@@ -1050,66 +1050,97 @@ export default function App() {
   // --- RENDER MODÜLLERİ ---
   const renderNavbar = (isDark = false) => (
     <>
-      <div className={`fixed top-0 left-0 w-full z-50 flex flex-col transition-all duration-700 ${isScrolled || isDark ? 'glass py-2' : 'bg-transparent py-4'} border-b ${isScrolled || isDark ? 'border-white/10' : 'border-transparent'}`}>
+      <div className={`fixed top-0 left-0 w-full z-50 flex flex-col transition-all duration-500 ${isScrolled || isDark ? 'glass py-2 sm:py-2.5 shadow-2xl' : 'bg-transparent py-2.5 sm:py-4'} border-b ${isScrolled || isDark ? 'border-white/10' : 'border-transparent'}`}>
         <nav className="w-full transition-all duration-500 flex flex-col items-center">
           
-          <div className="w-full max-w-[1920px] mx-auto px-6 sm:px-10 lg:px-16 flex flex-wrap items-center justify-between gap-y-3">
-            <div className={`transition-all duration-500 cursor-pointer flex items-center justify-center shrink-0 ${isScrolled || isDark ? 'h-10' : 'h-14 sm:h-16'}`} onClick={handleNavToHome}>
-              <img src="/salaaslogobg.png" alt="Salaaş Logo" className={`h-full w-auto object-contain transition-all duration-500 ${isDark ? 'filter drop-shadow-md brightness-200' : 'drop-shadow-xl'}`} />
+          {/* Üst Ana Satır: Logo (Sol) | Menü Linkleri (Orta-Masaüstü) | Butonlar (Sağ) */}
+          <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-8 lg:px-16 flex items-center justify-between">
+            <div className={`transition-all duration-300 cursor-pointer flex items-center justify-center shrink-0 ${isScrolled || isDark ? 'h-9 sm:h-12' : 'h-11 sm:h-16'}`} onClick={handleNavToHome}>
+              <img src="/salaaslogobg.png" alt="Salaaş Logo" className="h-full w-auto object-contain select-none transition-transform duration-300 hover:scale-105" />
             </div>
             
-            <div className={`hidden lg:flex flex-1 justify-center items-center gap-10 xl:gap-14 font-bold text-sm uppercase tracking-[0.15em] transition-colors duration-500 ${isScrolled || isDark ? 'text-slate-200' : 'text-white drop-shadow-md'}`}>
-              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('hakkimizda'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5">Biz Kimiz?</button>
-              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('lezzetler'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5">Lezzetler</button>
-              <button onClick={handleNavToPersonnel} className={`hover:text-[#c2784f] transition-all hover:-translate-y-0.5 ${currentView === 'personnel' ? 'text-[#c2784f]' : ''}`}>Ekibimiz</button>
-              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('iletisim'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5">İletişim</button>
+            <div className={`hidden lg:flex flex-1 justify-center items-center gap-8 xl:gap-12 font-bold text-xs xl:text-sm uppercase tracking-[0.2em] transition-colors duration-500 ${isScrolled || isDark ? 'text-slate-200' : 'text-white drop-shadow-md'}`}>
+              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('hakkimizda'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#c2784f] after:transition-all">Biz Kimiz?</button>
+              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('lezzetler'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#c2784f] after:transition-all">Lezzetler</button>
+              <button onClick={handleNavToPersonnel} className={`hover:text-[#c2784f] transition-all hover:-translate-y-0.5 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#c2784f] after:transition-all ${currentView === 'personnel' ? 'text-[#c2784f] after:w-full' : ''}`}>Ekibimiz</button>
+              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('iletisim'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#c2784f] after:transition-all">İletişim</button>
             </div>
             
-            <div className="shrink-0 flex items-center justify-end gap-3 sm:gap-5">
+            {/* Butonlar: Rezervasyon, Menü, Hamburger (Mobilde tam sığacak ve taşmayacak şekilde) */}
+            <div className="shrink-0 flex items-center justify-end gap-1.5 sm:gap-3">
               <button 
                 onClick={() => setShowRequestModal(true)} 
-                className="btn-outline-premium px-4 py-2 sm:px-6 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-black tracking-[0.2em] uppercase shadow-lg flex items-center gap-2"
+                className="btn-outline-premium active-press px-2.5 py-1.5 sm:px-5 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-black tracking-wider uppercase shadow-md flex items-center gap-1.5 shrink-0 hover:border-[#c2784f] transition-all"
               >
-                <CalendarDays size={16} /> <span className="hidden sm:inline">Rezervasyon</span><span className="sm:hidden">Rezv.</span>
+                <CalendarDays size={14} className="shrink-0" /> <span className="hidden sm:inline">Rezervasyon</span><span className="sm:hidden">Rezv.</span>
               </button>
               <button 
                 onClick={handleNavToMenu} 
-                className="btn-premium shine-effect px-5 py-2 sm:px-8 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-black tracking-[0.2em] uppercase shadow-2xl flex items-center gap-2"
+                className="btn-premium shine-effect active-press px-2.5 py-1.5 sm:px-6 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-black tracking-wider uppercase shadow-xl flex items-center gap-1.5 shrink-0"
               >
-                <MenuSquare size={16} /> <span className="hidden sm:inline">Menü</span>
+                <MenuSquare size={14} className="shrink-0" /> <span>Menü</span>
               </button>
               <button 
                 onClick={() => setIsMobileMenuOpen(true)}
-                className={`lg:hidden flex items-center justify-center p-2 rounded-lg transition-colors ${isScrolled || isDark ? 'text-slate-200 hover:text-white' : 'text-white drop-shadow-md hover:text-[#c2784f]'}`}
+                className={`lg:hidden w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl transition-colors active-press shrink-0 ${isScrolled || isDark ? 'text-slate-200 hover:text-white bg-white/10 border border-white/10' : 'text-white hover:text-[#c2784f] bg-black/40 backdrop-blur-md border border-white/15'}`}
+                aria-label="Menüyü Aç"
               >
-                <Menu size={32} />
+                <Menu size={18} className="sm:hidden" />
+                <Menu size={22} className="hidden sm:block" />
               </button>
             </div>
-            
-            <div className={`lg:hidden w-full flex items-center justify-center gap-6 overflow-x-auto hide-scrollbar text-[10px] font-black tracking-widest uppercase mt-2 pb-1 transition-colors duration-500 ${isScrolled || isDark ? 'text-slate-300' : 'text-white drop-shadow-md'}`}>
-              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('hakkimizda'), 100); }} className="whitespace-nowrap hover:text-[#c2784f] transition-colors">Biz Kimiz</button>
-              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('lezzetler'), 100); }} className="whitespace-nowrap hover:text-[#c2784f] transition-colors">Lezzetler</button>
-              <button onClick={handleNavToPersonnel} className={`whitespace-nowrap hover:text-[#c2784f] transition-colors ${currentView === 'personnel' ? 'text-[#c2784f]' : ''}`}>Ekibimiz</button>
-            </div>
-            
           </div>
+            
+          {/* MOBİL HIZLI KÖPRÜLER - Modern Glass Kapsül */}
+          <div className="lg:hidden w-full flex items-center justify-center mt-2 px-3">
+            <div className="flex items-center justify-center gap-4 sm:gap-6 px-4 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[10px] font-black tracking-widest uppercase text-slate-300 shadow-md">
+              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('hakkimizda'), 100); }} className="whitespace-nowrap hover:text-[#c2784f] active:text-[#c2784f] transition-colors active-press">Biz Kimiz</button>
+              <span className="w-1 h-1 rounded-full bg-white/20"></span>
+              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('lezzetler'), 100); }} className="whitespace-nowrap hover:text-[#c2784f] active:text-[#c2784f] transition-colors active-press">Lezzetler</button>
+              <span className="w-1 h-1 rounded-full bg-white/20"></span>
+              <button onClick={handleNavToPersonnel} className={`whitespace-nowrap hover:text-[#c2784f] active:text-[#c2784f] transition-colors active-press ${currentView === 'personnel' ? 'text-[#c2784f]' : ''}`}>Ekibimiz</button>
+            </div>
+          </div>
+          
         </nav>
       </div>
 
-      {/* MOBİL MENÜ ALANI */}
+      {/* MOBİL MENÜ ÇEKMECESİ - Ultra Lüks Midnight Panel */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[200] glass flex flex-col p-8 animate-in fade-in duration-300 lg:hidden">
-          <div className="flex justify-between items-center w-full mb-12">
-            <img src="/salaaslogobg.png" alt="Salaaş Logo" className="h-12 object-contain filter drop-shadow-xl brightness-200" />
-            <button onClick={() => setIsMobileMenuOpen(false)} className="text-white p-3 border border-white/20 rounded-full hover:bg-white/10 transition-colors"><X size={28} /></button>
+        <div className="fixed inset-0 z-[200] bg-[#0a0908]/95 backdrop-blur-2xl flex flex-col p-6 sm:p-8 animate-in fade-in duration-300 lg:hidden">
+          <div className="flex justify-between items-center w-full mb-10 pb-4 border-b border-white/10">
+            <img src="/salaaslogobg.png" alt="Salaaş Logo" className="h-12 object-contain select-none" />
+            <button onClick={() => setIsMobileMenuOpen(false)} className="text-white p-3 border border-white/20 rounded-2xl hover:bg-white/10 transition-colors active-press"><X size={24} /></button>
           </div>
-          <div className="flex flex-col items-start gap-8 flex-1 text-2xl font-black text-white tracking-widest font-serif">
-            <button className="hover:text-[#c2784f] transition-colors" onClick={() => { setIsMobileMenuOpen(false); if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('hakkimizda'), 100); }}>Hikayemiz</button>
-            <button className="hover:text-[#c2784f] transition-colors" onClick={() => { setIsMobileMenuOpen(false); if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('lezzetler'), 100); }}>Lezzetler</button>
-            <button className={`hover:text-[#c2784f] transition-colors ${currentView === 'personnel' ? 'text-[#c2784f]' : ''}`} onClick={() => { setIsMobileMenuOpen(false); handleNavToPersonnel(); }}>Ekibimiz</button>
-            <button className="hover:text-[#c2784f] transition-colors" onClick={() => { setIsMobileMenuOpen(false); if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('iletisim'), 100); }}>İletişim</button>
-            <hr className="w-full border-white/10 my-4" />
-            <button onClick={() => { setIsMobileMenuOpen(false); setShowRequestModal(true); }} className="w-full btn-premium py-4 rounded-xl flex items-center justify-center gap-3 uppercase text-sm tracking-[0.2em] font-sans"><CalendarDays size={20}/> Rezervasyon Yap</button>
+          
+          <div className="flex flex-col items-start gap-6 flex-1 text-2xl font-black text-white tracking-widest font-serif">
+            <button className="hover:text-[#c2784f] transition-colors active-press flex items-center justify-between w-full text-left" onClick={() => { setIsMobileMenuOpen(false); if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('hakkimizda'), 100); }}>
+              <span>Hikayemiz</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
+            </button>
+            <button className="hover:text-[#c2784f] transition-colors active-press flex items-center justify-between w-full text-left" onClick={() => { setIsMobileMenuOpen(false); if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('lezzetler'), 100); }}>
+              <span>Lezzetler</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
+            </button>
+            <button className={`hover:text-[#c2784f] transition-colors active-press flex items-center justify-between w-full text-left ${currentView === 'personnel' ? 'text-[#c2784f]' : ''}`} onClick={() => { setIsMobileMenuOpen(false); handleNavToPersonnel(); }}>
+              <span>Ekibimiz</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
+            </button>
+            <button className="hover:text-[#c2784f] transition-colors active-press flex items-center justify-between w-full text-left" onClick={() => { setIsMobileMenuOpen(false); if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('iletisim'), 100); }}>
+              <span>İletişim & Konum</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
+            </button>
+            
+            <hr className="w-full border-white/10 my-2" />
+            
+            <div className="w-full grid grid-cols-2 gap-3">
+              <a href={`tel:+${WHATSAPP_NO}`} className="glass p-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold text-slate-200 border border-white/10 active-press">
+                <Phone size={16} className="text-[#c2784f]"/> Telefon Et
+              </a>
+              <a href="https://www.instagram.com/salascaferestaurant/" target="_blank" rel="noreferrer" className="glass p-3.5 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold text-slate-200 border border-white/10 active-press">
+                <Instagram size={16} className="text-[#c2784f]"/> Instagram
+              </a>
+            </div>
+            
+            <button onClick={() => { setIsMobileMenuOpen(false); setShowRequestModal(true); }} className="w-full btn-premium py-4 rounded-2xl flex items-center justify-center gap-3 uppercase text-xs sm:text-sm tracking-[0.2em] font-sans font-black shadow-2xl active-press mt-auto">
+              <CalendarDays size={18}/> Rezervasyon Talebi Yap
+            </button>
           </div>
         </div>
       )}
@@ -1207,7 +1238,7 @@ export default function App() {
         <div className="flex items-center gap-2 text-xs text-slate-300 order-1 md:order-2">
           <span className="font-light tracking-wide text-slate-400">Tasarım & Geliştirme:</span>
           <a
-            href="https://affan-portfolio-gilt.vercel.app/"
+            href="https://affanccn.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#c2784f]/10 hover:bg-[#c2784f]/20 text-[#e09f7a] hover:text-white border border-[#c2784f]/30 hover:border-[#c2784f] transition-all duration-300 group shadow-[0_0_15px_rgba(194,120,79,0.15)] hover:shadow-[0_0_20px_rgba(194,120,79,0.3)] hover:-translate-y-0.5"
@@ -1672,106 +1703,171 @@ export default function App() {
   // --- SAYFA RENDER: VİTRİN ---
   if (currentView === 'landing') {
     return (
-      <div className="min-h-screen bg-slate-50 font-sans text-slate-800 relative flex flex-col scroll-smooth w-full">
+      <div className="min-h-screen bg-[#0a0908] font-sans text-slate-100 relative flex flex-col scroll-smooth w-full overflow-x-hidden">
         <style dangerouslySetInnerHTML={{ __html: GLOBAL_CSS }} />
         {renderNavbar(false)}
 
-        <header className="relative w-full min-h-[600px] h-[85vh] max-h-[1100px] flex items-center justify-center overflow-hidden pt-24 sm:pt-20 bg-[#0a0908] bg-[url('/salaasarkaplan.jpeg')] bg-cover bg-center bg-no-repeat">
-           <div className="absolute inset-0 z-0 bg-black/50">
+        {/* HERO BÖLÜMÜ */}
+        <header className="relative w-full min-h-[640px] sm:min-h-[720px] lg:h-[92vh] max-h-[1100px] flex items-center justify-center overflow-hidden pt-28 sm:pt-24 pb-20 sm:pb-24 bg-[#0a0908] bg-[url('/salaasarkaplan.jpeg')] bg-cover bg-center bg-no-repeat">
+           <div className="absolute inset-0 z-0 bg-black/60">
              <div className="absolute inset-0 bg-gradient-to-b from-[#0a0908]/90 via-black/40 to-[#0a0908] w-full"></div>
-             <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #c2784f 1.5px, transparent 1.5px)', backgroundSize: '60px 60px' }}></div>
+             <div className="absolute inset-0 opacity-[0.12]" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #c2784f 1.5px, transparent 1.5px)', backgroundSize: '60px 60px' }}></div>
            </div>
            
-           <div className="relative z-10 text-center px-4 sm:px-6 w-full flex flex-col items-center justify-center h-full pb-16">
-              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-wide text-white font-serif mb-6 drop-shadow-2xl animate-fade-in-up delay-100 leading-tight">
+           {/* Masaüstü Atmosferik Bakır Işık */}
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[650px] lg:w-[800px] h-[350px] sm:h-[450px] bg-[#c2784f]/15 rounded-full blur-[140px] pointer-events-none"></div>
+
+           <div className="relative z-10 text-center px-4 sm:px-6 w-full max-w-6xl mx-auto flex flex-col items-center justify-center h-full">
+              <span className="text-[10px] sm:text-xs font-black tracking-[0.4em] text-[#e09f7a] uppercase mb-4 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md animate-fade-in-up">
+                Gebze'nin Gözde Mekanı
+              </span>
+              
+              <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white font-serif mb-4 sm:mb-6 drop-shadow-2xl animate-fade-in-up delay-100 leading-[1.12]">
                 Lezzet ve <span className="text-gradient-copper italic font-light">Muhabbetin</span> Adresi
               </h1>
-              <p className="text-lg sm:text-xl lg:text-2xl text-slate-300 max-w-4xl mx-auto font-light tracking-wide mb-12 drop-shadow-lg animate-fade-in-up delay-200">
+              
+              <p className="text-sm sm:text-lg lg:text-xl text-slate-300 max-w-3xl mx-auto font-light tracking-wide mb-8 sm:mb-12 leading-relaxed drop-shadow-md animate-fade-in-up delay-200">
                 Şehrin gürültüsünden uzak, samimi atmosferimizde unutulmaz tatlar ve anılar biriktirin.
               </p>
               
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 animate-fade-in-scale delay-300 w-full max-w-md lg:max-w-lg mx-auto mb-16">
-                 <button onClick={() => setShowRequestModal(true)} className="w-full sm:w-auto btn-premium px-8 py-4 lg:px-10 lg:py-5 rounded-full font-black uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-3 lg:text-base">
-                   <CalendarDays size={20} /> Rezervasyon Talebi
+              {/* Eylem Butonları: Rezervasyon + Menü */}
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-3.5 sm:gap-5 animate-fade-in-scale delay-300 w-full max-w-md lg:max-w-xl mx-auto mb-10 sm:mb-14">
+                 <button 
+                   onClick={() => setShowRequestModal(true)} 
+                   className="w-full sm:w-auto btn-premium active-press px-8 py-4 sm:py-4.5 lg:px-10 rounded-full font-black uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-3 text-xs sm:text-sm glow-copper"
+                 >
+                   <CalendarDays size={18} /> Rezervasyon Talebi
+                 </button>
+                 
+                 <button 
+                   onClick={handleNavToMenu} 
+                   className="w-full sm:w-auto btn-outline-premium active-press bg-black/40 backdrop-blur-md px-8 py-4 sm:py-4.5 rounded-full font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2.5 text-xs sm:text-sm hover:border-[#c2784f] text-white"
+                 >
+                   <UtensilsCrossed size={17} className="text-[#c2784f]" /> Dijital Menü
                  </button>
               </div>
               
-              <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-10 text-[10px] sm:text-xs lg:text-sm font-black tracking-widest uppercase text-slate-200 animate-fade-in-up delay-400">
-                 <span className="flex items-center gap-2 glass px-5 py-2.5 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-full shadow-xl">
-                   <Coffee size={18} className="text-[#c2784f]"/> Kahvaltı
-                 </span>
-                 <span className="flex items-center gap-2 glass px-5 py-2.5 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-full shadow-xl">
-                   <UtensilsCrossed size={18} className="text-[#c2784f]"/> Izgara
-                 </span>
-                 <span className="flex items-center gap-2 glass px-5 py-2.5 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-full shadow-xl">
-                   <Wind size={18} className="text-[#c2784f]"/> Nargile
-                 </span>
+              {/* Kategori Rozetleri */}
+              <div className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-8 text-[10px] sm:text-xs font-black tracking-widest uppercase text-slate-200 animate-fade-in-up delay-400">
+                 <button onClick={handleNavToMenu} className="flex items-center gap-2 glass px-5 py-2.5 sm:px-6 sm:py-3 rounded-full shadow-lg hover:border-[#c2784f]/50 hover:bg-[#c2784f]/10 transition-all active-press">
+                   <Coffee size={16} className="text-[#c2784f]"/> Kahvaltı
+                 </button>
+                 <button onClick={handleNavToMenu} className="flex items-center gap-2 glass px-5 py-2.5 sm:px-6 sm:py-3 rounded-full shadow-lg hover:border-[#c2784f]/50 hover:bg-[#c2784f]/10 transition-all active-press">
+                   <UtensilsCrossed size={16} className="text-[#c2784f]"/> Izgara & Burger
+                 </button>
+                 <button onClick={handleNavToMenu} className="flex items-center gap-2 glass px-5 py-2.5 sm:px-6 sm:py-3 rounded-full shadow-lg hover:border-[#c2784f]/50 hover:bg-[#c2784f]/10 transition-all active-press">
+                   <Wind size={16} className="text-[#c2784f]"/> Nargile & İçecek
+                 </button>
               </div>
            </div>
            
-           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/50 animate-bounce cursor-pointer z-20 hover:text-[#c2784f] transition-colors" onClick={() => handleScrollToId('hakkimizda')}>
-              <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase font-bold block mb-3 opacity-70 text-center">Keşfet</span>
-              <div className="w-6 h-10 lg:w-8 lg:h-12 border-2 border-white/20 rounded-full flex justify-center p-1 mx-auto">
-                <div className="w-1 h-2 lg:h-3 bg-[#c2784f] rounded-full"></div>
+           {/* Keşfet Kaydırma İndikatörü */}
+           <div className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-white/50 animate-bounce cursor-pointer z-20 hover:text-[#c2784f] transition-colors" onClick={() => handleScrollToId('hakkimizda')}>
+              <span className="text-[9px] tracking-[0.3em] uppercase font-bold block mb-1 opacity-70 text-center">Keşfet</span>
+              <div className="w-5 h-8 sm:w-6 sm:h-9 border-2 border-white/20 rounded-full flex justify-center p-1 mx-auto">
+                <div className="w-1 h-2 bg-[#c2784f] rounded-full"></div>
               </div>
            </div>
         </header>
 
         <main className="w-full relative z-10 flex-1 flex flex-col">
-          <section id="hakkimizda" className="relative w-full mx-auto px-4 sm:px-8 lg:px-16 xl:px-24 py-24 md:py-36 text-center bg-[#1c1917] text-white bg-[url('/bizkimizarkaplan.png')] bg-cover bg-center bg-fixed">
-            <div className="absolute inset-0 z-0 bg-black/60">
-              <div className="absolute inset-0 bg-gradient-to-b from-[#1c1917] via-black/40 to-[#0a0908]"></div>
+          {/* HİKAYEMİZ / BİZ KİMİZ */}
+          <section id="hakkimizda" className="relative w-full mx-auto px-4 sm:px-8 lg:px-16 xl:px-24 py-20 sm:py-28 md:py-36 text-center bg-[#1c1917] text-white bg-[url('/bizkimizarkaplan.png')] bg-cover bg-center bg-fixed">
+            <div className="absolute inset-0 z-0 bg-black/65">
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0a0908] via-black/40 to-[#0a0908]"></div>
             </div>
             
-            <div className="relative z-10">
-              <div className="animate-float inline-block mb-8">
-                <div className="w-20 h-20 rounded-full bg-[#c2784f]/10 flex items-center justify-center border border-[#c2784f]/20 shadow-[0_0_30px_rgba(194,120,79,0.15)]">
-                  <MoonStar size={40} className="text-[#c2784f]" />
+            <div className="relative z-10 max-w-5xl mx-auto">
+              <div className="animate-float inline-block mb-6">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#c2784f]/10 flex items-center justify-center border border-[#c2784f]/30 shadow-[0_0_30px_rgba(194,120,79,0.2)]">
+                  <MoonStar size={36} className="text-[#c2784f]" />
                 </div>
               </div>
-              <h2 className="text-[10px] sm:text-xs lg:text-sm font-black tracking-[0.4em] text-[#e09f7a] uppercase mb-4">Hikayemiz</h2>
-              <h3 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-light text-white mb-10 leading-tight">Sıcak, Samimi ve <span className="text-gradient-copper font-black italic">Lezzetli</span></h3>
-              <p className="text-base sm:text-lg lg:text-xl text-slate-300 leading-relaxed font-light max-w-4xl mx-auto px-4">
+              
+              <h2 className="text-[10px] sm:text-xs lg:text-sm font-black tracking-[0.4em] text-[#e09f7a] uppercase mb-3">Hikayemiz</h2>
+              <h3 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-light text-white mb-8 leading-tight">
+                Sıcak, Samimi ve <span className="text-gradient-copper font-black italic">Lezzetli</span>
+              </h3>
+              
+              <p className="text-sm sm:text-base lg:text-xl text-slate-300 leading-relaxed font-light max-w-4xl mx-auto px-4">
                 Salaaş Cafe Restaurant olarak, misafirlerimize kendilerini evlerinde hissedecekleri sıcak bir ortam sunuyoruz. Özenle seçilmiş malzemelerle hazırladığımız zengin menümüz, imza ızgaralarımız, serpme kahvaltımız ve keyifli nargile köşemizle günün her saatinde kaliteli bir deneyim yaşatmayı hedefliyoruz.
               </p>
-              <div className="w-20 h-1 bg-[#c2784f] mx-auto mt-16 rounded-full opacity-50"></div>
+
+              {/* Masaüstü ve Mobil Prestij Kartları */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-8 max-w-5xl mx-auto mt-14 sm:mt-16 text-left">
+                <div className="glass-card rounded-2xl p-6 sm:p-7 flex items-start gap-4 border border-white/10 hover:border-[#c2784f]/40 transition-all">
+                  <div className="w-12 h-12 rounded-xl bg-[#c2784f]/15 border border-[#c2784f]/30 flex items-center justify-center shrink-0 text-[#e09f7a]">
+                    <Users size={22} />
+                  </div>
+                  <div>
+                    <h4 className="font-serif text-lg text-white font-medium mb-1">300+ Kişilik Alan</h4>
+                    <p className="text-xs sm:text-sm text-slate-400 font-light leading-relaxed">Ferah bahçe ve kapalı salonumuzla keyifli buluşmalara ev sahipliği yapıyoruz.</p>
+                  </div>
+                </div>
+
+                <div className="glass-card rounded-2xl p-6 sm:p-7 flex items-start gap-4 border border-white/10 hover:border-[#c2784f]/40 transition-all">
+                  <div className="w-12 h-12 rounded-xl bg-[#c2784f]/15 border border-[#c2784f]/30 flex items-center justify-center shrink-0 text-[#e09f7a]">
+                    <ChefHat size={22} />
+                  </div>
+                  <div>
+                    <h4 className="font-serif text-lg text-white font-medium mb-1">Doğal & Taze Mutfak</h4>
+                    <p className="text-xs sm:text-sm text-slate-400 font-light leading-relaxed">Serpme köy kahvaltısından zengin ızgaralara günlük en kaliteli ürünler.</p>
+                  </div>
+                </div>
+
+                <div className="glass-card rounded-2xl p-6 sm:p-7 flex items-start gap-4 border border-white/10 hover:border-[#c2784f]/40 transition-all">
+                  <div className="w-12 h-12 rounded-xl bg-[#c2784f]/15 border border-[#c2784f]/30 flex items-center justify-center shrink-0 text-[#e09f7a]">
+                    <Wind size={22} />
+                  </div>
+                  <div>
+                    <h4 className="font-serif text-lg text-white font-medium mb-1">Keyifli Muhabbet</h4>
+                    <p className="text-xs sm:text-sm text-slate-400 font-light leading-relaxed">Özel nargile çeşitleri, sıcak kahveler ve maç yayınları eşliğinde samimi vakit.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-20 h-1 bg-[#c2784f] mx-auto mt-14 rounded-full opacity-50"></div>
             </div>
           </section>
 
-          <section id="lezzetler" className="w-full py-24 md:py-36 bg-[#0a0908] relative">
-            <div className="absolute top-1/4 left-0 w-64 h-64 bg-[#c2784f]/10 rounded-full blur-[120px]"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-[150px]"></div>
+          {/* VİTRİNİMİZ / BUNU DENEDİNİZ Mİ */}
+          <section id="lezzetler" className="w-full py-20 sm:py-28 md:py-36 bg-[#0a0908] relative">
+            <div className="absolute top-1/4 left-0 w-72 h-72 bg-[#c2784f]/10 rounded-full blur-[140px] pointer-events-none"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-[160px] pointer-events-none"></div>
 
-            <div className="w-full mx-auto px-6 sm:px-10 lg:px-16 xl:px-24 relative z-10">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-16 gap-8">
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 sm:mb-16 gap-6">
                 <div>
-                  <h2 className="text-[10px] sm:text-xs lg:text-sm font-black tracking-[0.4em] text-[#e09f7a] uppercase mb-4">Vitrinimiz</h2>
-                  <h3 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-light text-white">Bunu <span className="text-gradient-copper italic font-black">Denediniz mi?</span></h3>
+                  <h2 className="text-[10px] sm:text-xs lg:text-sm font-black tracking-[0.4em] text-[#e09f7a] uppercase mb-3">Vitrinimiz</h2>
+                  <h3 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-light text-white">Bunu <span className="text-gradient-copper italic font-black">Denediniz mi?</span></h3>
                 </div>
                 <button 
                   onClick={handleNavToMenu} 
-                  className="group flex items-center gap-4 text-xs font-black text-slate-400 hover:text-[#c2784f] transition-all uppercase tracking-[0.2em]"
+                  className="group flex items-center gap-3.5 text-xs font-black text-slate-300 hover:text-[#c2784f] transition-all uppercase tracking-[0.2em] active-press"
                 >
                   Tüm Menüyü Gör 
-                  <div className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center group-hover:border-[#c2784f] group-hover:bg-[#c2784f]/10 transition-colors">
+                  <div className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center group-hover:border-[#c2784f] group-hover:bg-[#c2784f]/15 group-hover:translate-x-1 transition-all">
                     <ChevronRight size={18} className="text-white group-hover:text-[#c2784f]"/>
                   </div>
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 xl:gap-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
                 {activeGallery.slice(0, 4).map((item) => (
                   <div 
                     key={item.id}
                     onClick={() => setSelectedMenuItem(item)} 
-                    className="glass-card rounded-[2rem] overflow-hidden relative group h-80 sm:h-96 md:h-[450px] cursor-pointer"
+                    className="glass-card rounded-3xl overflow-hidden relative group h-80 sm:h-96 md:h-[440px] cursor-pointer active-press hover:border-[#c2784f]/50 hover:shadow-[0_20px_50px_rgba(194,120,79,0.2)] transition-all duration-500"
                   >
-                    <img src={item.image} alt={item.name} className={`w-full h-full object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-1000 ${item.isSoldOut ? 'opacity-40 grayscale' : 'opacity-80 group-hover:opacity-100'}`} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end p-8 lg:p-10">
-                       <span className={`text-[9px] lg:text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full w-max mb-6 flex items-center gap-2 backdrop-blur-md border ${item.isSoldOut ? 'bg-red-900/80 border-red-500/50 text-red-200' : 'bg-black/60 border-white/20 text-[#e09f7a]'}`}>
-                         {item.isSoldOut ? 'TÜKENDİ' : <><Star size={12} className="text-[#c2784f]"/> {item.tag || 'Öne Çıkan'}</>}
+                    <img src={item.image} alt={item.name} className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${item.isSoldOut ? 'opacity-40 grayscale' : 'opacity-85 group-hover:opacity-100'}`} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end p-6 sm:p-8">
+                       <span className={`text-[9px] font-black uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full w-max mb-3 flex items-center gap-1.5 backdrop-blur-md border ${item.isSoldOut ? 'bg-red-900/80 border-red-500/50 text-red-200' : 'bg-black/60 border-white/20 text-[#e09f7a]'}`}>
+                         {item.isSoldOut ? 'TÜKENDİ' : <><Star size={11} className="text-[#c2784f] fill-[#c2784f]"/> {item.tag || 'Öne Çıkan'}</>}
                        </span>
-                       <h4 className="text-white font-serif font-light text-3xl lg:text-4xl drop-shadow-md mb-2 group-hover:text-[#c2784f] transition-colors">{item.name}</h4>
+                       <h4 className="text-white font-serif font-light text-2xl sm:text-3xl drop-shadow-md mb-1 group-hover:text-[#c2784f] transition-colors leading-snug">{item.name}</h4>
+                       <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity mt-1 flex items-center gap-1 text-[#e09f7a]">
+                         İncele & Bilgi Al <ChevronRight size={12}/>
+                       </span>
                     </div>
                   </div>
                 ))}
@@ -1779,22 +1875,50 @@ export default function App() {
             </div>
           </section>
 
-          <section className="w-full py-28 md:py-40 bg-[#12100e] text-white relative overflow-hidden border-t border-white/5">
-             <div className="absolute inset-0 opacity-[0.03] w-full h-full" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #ffffff 2px, transparent 2px)', backgroundSize: '40px 40px' }}></div>
-             <div className="absolute -left-32 top-0 opacity-10 text-[#c2784f] hidden md:block"><Star size={600}/></div>
+          {/* DAVET & ORGANİZASYON - Lüks Kart Yapısı */}
+          <section className="w-full py-20 sm:py-28 md:py-36 bg-[#0e0d0b] text-white relative overflow-hidden border-t border-white/5">
+             <div className="absolute inset-0 opacity-[0.03] w-full h-full pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #ffffff 2px, transparent 2px)', backgroundSize: '40px 40px' }}></div>
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[#c2784f]/10 rounded-full blur-[160px] pointer-events-none"></div>
              
-             <div className="w-full mx-auto px-6 sm:px-10 lg:px-16 text-center relative z-10">
-               <h2 className="text-[10px] lg:text-xs font-black tracking-[0.4em] text-[#e09f7a] uppercase mb-6">Davet & Organizasyon</h2>
-               <h3 className="text-4xl sm:text-5xl lg:text-7xl font-serif font-light mb-8 drop-shadow-lg text-white">Özel Günleriniz İçin <br/> <span className="text-gradient-copper font-black italic">Yanınızdayız</span></h3>
-               <p className="text-base sm:text-lg lg:text-2xl text-slate-400 font-light mb-16 max-w-3xl mx-auto leading-relaxed">
-                 Doğum günü partileri, şirket yemekleri, toplu iftarlar ve tüm özel kutlamalarınız için 300 kişilik kapasitemiz ve size özel menülerimizle hizmetinizdeyiz.
-               </p>
-               <button 
-                 onClick={() => {setRequestData({...requestData, type: 'organizasyon'}); setShowRequestModal(true);}} 
-                 className="btn-premium px-10 py-5 lg:px-12 lg:py-6 rounded-full font-black uppercase tracking-[0.2em] shadow-2xl inline-flex items-center gap-3 text-sm lg:text-base"
-               >
-                 <CalendarDays size={20}/> Organizasyon Talebi
-               </button>
+             <div className="w-full max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+               <div className="card-luxury rounded-3xl sm:rounded-[2.5rem] p-8 sm:p-14 lg:p-20 text-center relative overflow-hidden border border-[#c2784f]/25 shadow-2xl">
+                 <span className="text-[10px] sm:text-xs font-black tracking-[0.4em] text-[#e09f7a] uppercase mb-4 inline-block">Davet & Organizasyon</span>
+                 
+                 <h3 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-light mb-6 drop-shadow-lg text-white leading-tight">
+                   Özel Günleriniz İçin <br/> 
+                   <span className="text-gradient-copper font-black italic">Yanınızdayız</span>
+                 </h3>
+                 
+                 <p className="text-sm sm:text-base lg:text-xl text-slate-300 font-light mb-10 max-w-3xl mx-auto leading-relaxed">
+                   Doğum günü partileri, şirket yemekleri, toplu iftarlar ve tüm özel kutlamalarınız için 300 kişilik kapasitemiz ve size özel menülerimizle hizmetinizdeyiz.
+                 </p>
+
+                 {/* Organizasyon Rozetleri */}
+                 <div className="flex flex-wrap justify-center gap-2.5 sm:gap-4 mb-10 sm:mb-12 max-w-2xl mx-auto">
+                   <span className="glass px-4 py-2 rounded-full text-xs font-bold text-slate-200 border border-white/10 flex items-center gap-2">🎂 Doğum Günleri</span>
+                   <span className="glass px-4 py-2 rounded-full text-xs font-bold text-slate-200 border border-white/10 flex items-center gap-2">💼 Kurumsal Yemekler</span>
+                   <span className="glass px-4 py-2 rounded-full text-xs font-bold text-slate-200 border border-white/10 flex items-center gap-2">🌙 Toplu İftarlar</span>
+                   <span className="glass px-4 py-2 rounded-full text-xs font-bold text-slate-200 border border-white/10 flex items-center gap-2">✨ Özel Kutlamalar</span>
+                 </div>
+                 
+                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                   <button 
+                     onClick={() => {setRequestData({...requestData, type: 'organizasyon'}); setShowRequestModal(true);}} 
+                     className="w-full sm:w-auto btn-premium active-press px-8 py-4 sm:py-4.5 lg:px-10 rounded-full font-black uppercase tracking-[0.2em] shadow-2xl inline-flex items-center justify-center gap-3 text-xs sm:text-sm glow-copper"
+                   >
+                     <CalendarDays size={18}/> Organizasyon Talebi
+                   </button>
+                   
+                   <a
+                     href={`https://wa.me/${WHATSAPP_NO}?text=${encodeURIComponent('Merhaba Salaaş Cafe, organizasyon ve özel davetler hakkında bilgi almak istiyorum.')}`}
+                     target="_blank"
+                     rel="noreferrer"
+                     className="w-full sm:w-auto btn-outline-premium active-press px-7 py-4 rounded-full font-bold uppercase tracking-widest text-xs sm:text-sm inline-flex items-center justify-center gap-2 bg-white/5 hover:border-[#c2784f]"
+                   >
+                     <MessageCircle size={18} className="text-[#25D366]"/> WhatsApp'tan Bilgi Al
+                   </a>
+                 </div>
+               </div>
              </div>
           </section>
 
@@ -1803,15 +1927,16 @@ export default function App() {
         {renderFooter()}
         {renderModals()}
         
-        {/* WHATSAPP FLOATING BUTTON */}
+        {/* WHATSAPP YÜZEN BUTON (Pulsing Beacon & Tactile Press) */}
         <a 
           href={`https://wa.me/${WHATSAPP_NO}?text=Merhaba%20Salaas%20Cafe,%20`} 
           target="_blank" 
           rel="noreferrer" 
-          className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20b858] text-white px-5 py-3.5 rounded-full font-black shadow-2xl flex items-center justify-center gap-2 transition-transform hover:scale-110 border-4 border-white"
+          className="fixed bottom-6 right-5 sm:right-6 z-50 bg-[#25D366] hover:bg-[#20b858] text-white px-4 py-3 sm:px-5 sm:py-3.5 rounded-full font-black shadow-2xl flex items-center justify-center gap-2 transition-transform hover:scale-105 active-press animate-beacon border-2 border-white/80"
+          aria-label="WhatsApp İletişim"
         >
           <span className="text-xl">💬</span>
-          <span className="hidden sm:block text-sm uppercase tracking-widest">WhatsApp</span>
+          <span className="hidden sm:block text-xs font-black uppercase tracking-widest">WhatsApp</span>
         </a>
       </div>
     );

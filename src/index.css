@@ -232,3 +232,72 @@ h1, h2, h3, h4, h5, h6, .font-serif {
 .shine-effect { position: relative; overflow: hidden; }
 .shine-effect::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%); transform: skewX(-20deg); animation: shine 3s infinite; }
 @keyframes shine { 100% { left: 125%; } }
+
+/* Glow & Atmospheric Effects */
+.glow-copper {
+  box-shadow: 0 0 35px -5px rgba(194, 120, 79, 0.4);
+}
+
+.glow-copper-lg {
+  box-shadow: 0 10px 50px -10px rgba(194, 120, 79, 0.35);
+}
+
+.glow-amber {
+  box-shadow: 0 0 30px -5px rgba(217, 119, 6, 0.3);
+}
+
+/* Card Luxury for Desktop & Mobile */
+.card-luxury {
+  background: linear-gradient(145deg, rgba(28, 25, 23, 0.85) 0%, rgba(14, 13, 11, 0.95) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(194, 120, 79, 0.18);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-luxury:hover {
+  border-color: rgba(194, 120, 79, 0.45);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(194, 120, 79, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform: translateY(-4px);
+}
+
+/* Beacon Pulse for Floating CTA / WhatsApp */
+@keyframes beaconPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6); }
+  70% { transform: scale(1.03); box-shadow: 0 0 0 18px rgba(37, 211, 102, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+.animate-beacon {
+  animation: beaconPulse 2.8s infinite;
+}
+
+/* Tap Highlight & Touch Optimization */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Active touch feedback */
+.active-press {
+  transition: transform 0.15s ease;
+}
+.active-press:active {
+  transform: scale(0.96);
+}
+
+/* Custom Modal Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(10, 9, 8, 0.5);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(194, 120, 79, 0.3);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(194, 120, 79, 0.6);
+}
+
