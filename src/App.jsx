@@ -6,7 +6,8 @@ import {
   MonitorPlay, Lock, ArrowRight, MapPin, Instagram, Wind, Coffee, 
   ChevronRight, Star, Inbox, CheckCircle2, AlertTriangle, History, MenuSquare,
   Image as ImageIcon, AlignLeft, DollarSign, UploadCloud, GripVertical, UserSquare, Menu,
-  Home, Smartphone, Copy, Sparkles, Share2, Eye, Calendar, CheckSquare
+  Home, Smartphone, Copy, Sparkles, Share2, Eye, Calendar, CheckSquare,
+  ChevronDown, Tv, Trophy, HelpCircle
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
@@ -85,14 +86,14 @@ const BADGE_OPTIONS = [
 
 const DEFAULT_MENU_GALLERY = [
   { id: '1', name: 'Salaaş Köy Kahvaltısı', image: '/salaskoy.jpg', tag: 'İmza Lezzet', isFeatured: true },
-  { id: '2', name: 'Patron Kahvaltısı', image: '/patronkahvaltisi.jpg', tag: 'Özel', isFeatured: true },
+  { id: '2', name: 'Mantarlı Fırın Burger', image: '/mantarlıfırınburger.jpg', tag: 'Özel', isFeatured: true },
   { id: '3', name: 'Ispanak Yatağında Tavuk', image: '/ıspanakyatagındatavuk.jpg', tag: 'Şefin Tavsiyesi', isFeatured: true },
   { id: '4', name: 'Etli Bowl Tabağı', image: '/etlibowltabagi.jpg', tag: 'Sağlıklı', isFeatured: true },
   { id: '5', name: 'Üç Renkli Tortellini', image: '/ucrenklitortellini.jpg', tag: 'Yeni', isFeatured: true },
 ];
 
 const DEFAULT_MENU_ITEMS = [
-  { cat: 'kahvalti', items: [{n:'Salaaş Köy Kahvaltısı', i:'/salaskoy.jpg', f:true, b:['sefin_onerisi'], o:1}, {n:'Patron Kahvaltısı', i:'/patronkahvaltisi.jpg', f:true, b:['iki_kisilik'], o:2}, {n:'Kahvaltı Tabağı', i:'/kahvaltitabagi.jpg', o:3}, {n:'Menemen', o:4}, {n:'Pankek', o:5}] },
+  { cat: 'kahvalti', items: [{n:'Salaaş Köy Kahvaltısı', i:'/salaskoy.jpg', f:true, b:['sefin_onerisi'], o:1}, {n:'Kahvaltı Tabağı', i:'/kahvaltitabagi.jpg', o:2}, {n:'Menemen', o:3}, {n:'Pankek', o:4}] },
   { cat: 'burger', items: [{n:'Mantarlı Fırın Burger', i:'/mantarlıfırınburger.jpg', b:['populer'], o:1}, {n:'Klasik Burger', o:2}, {n:'Cheeseburger', o:3}] },
   { cat: 'kofte', items: [{n:'Hünkar Köfte', i:'/hunkarkofte.jpg', b:['sefin_onerisi'], o:1}, {n:'Izgara Köfte', o:2}, {n:'Kaşarlı Köfte', o:3}] },
   { cat: 'tavuk', items: [{n:'Cafe de Paris Soslu Tavuk', i:'/cafedeparis.jpg', o:1}, {n:'Ispanak Yatağında Tavuk', i:'/ıspanakyatagındatavuk.jpg', f:true, o:2}, {n:'Köz Patlıcanlı Tavuk', i:'/közpatlıcanlıtavukbnfile.jpg', o:3}] },
@@ -235,6 +236,7 @@ export default function App() {
   const [menuDeleteConfirmId, setMenuDeleteConfirmId] = useState(null);
 
   const [selectedMenuItem, setSelectedMenuItem] = useState(null);
+  const [openFaq, setOpenFaq] = useState(0);
 
   // --- DERIVED STATE CALCULATIONS ---
   const ALL_CATEGORIES = [...BASE_CATEGORIES];
@@ -1202,10 +1204,12 @@ export default function App() {
               <img src="/salaaslogobg.png" alt="Salaaş Logo" className="h-full w-auto object-contain select-none transition-transform duration-300 hover:scale-105" />
             </div>
             
-            <div className={`hidden lg:flex flex-1 justify-center items-center gap-8 xl:gap-12 font-bold text-xs xl:text-sm uppercase tracking-[0.2em] transition-colors duration-500 ${isScrolled || isDark ? 'text-slate-200' : 'text-white drop-shadow-md'}`}>
-              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('hakkimizda'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#c2784f] after:transition-all">Biz Kimiz?</button>
+            <div className={`hidden lg:flex flex-1 justify-center items-center gap-6 xl:gap-8 font-bold text-xs xl:text-sm uppercase tracking-[0.18em] transition-colors duration-500 ${isScrolled || isDark ? 'text-slate-200' : 'text-white drop-shadow-md'}`}>
+              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('kahvalti'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#c2784f] after:transition-all text-[#e09f7a]">🥞 Serpme Kahvaltı</button>
+              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('mac-yayini'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#c2784f] after:transition-all">⚽ Canlı Maç</button>
               <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('lezzetler'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#c2784f] after:transition-all">Lezzetler</button>
               <button onClick={handleNavToPersonnel} className={`hover:text-[#c2784f] transition-all hover:-translate-y-0.5 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#c2784f] after:transition-all ${currentView === 'personnel' ? 'text-[#c2784f] after:w-full' : ''}`}>Ekibimiz</button>
+              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('sss'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#c2784f] after:transition-all">SSS</button>
               <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('iletisim'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#c2784f] after:transition-all">İletişim</button>
             </div>
             
@@ -1259,24 +1263,30 @@ export default function App() {
 
       {/* MOBİL MENÜ ÇEKMECESİ - Ultra Lüks Midnight Panel */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[200] bg-[#0a0908]/95 backdrop-blur-2xl flex flex-col p-6 sm:p-8 animate-in fade-in duration-300 lg:hidden">
-          <div className="flex justify-between items-center w-full mb-10 pb-4 border-b border-white/10">
+        <div className="fixed inset-0 z-[200] bg-[#0a0908]/95 backdrop-blur-2xl flex flex-col p-6 sm:p-8 animate-in fade-in duration-300 lg:hidden overflow-y-auto">
+          <div className="flex justify-between items-center w-full mb-8 pb-4 border-b border-white/10">
             <img src="/salaaslogobg.png" alt="Salaaş Logo" className="h-12 object-contain select-none" />
             <button onClick={() => setIsMobileMenuOpen(false)} className="text-white p-3 border border-white/20 rounded-2xl hover:bg-white/10 transition-colors active-press"><X size={24} /></button>
           </div>
           
-          <div className="flex flex-col items-start gap-6 flex-1 text-2xl font-black text-white tracking-widest font-serif">
-            <button className="hover:text-[#c2784f] transition-colors active-press flex items-center justify-between w-full text-left" onClick={() => { setIsMobileMenuOpen(false); if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('hakkimizda'), 100); }}>
-              <span>Hikayemiz</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
+          <div className="flex flex-col items-start gap-5 flex-1 text-xl font-black text-white tracking-wider font-serif">
+            <button className="hover:text-[#c2784f] text-[#e09f7a] transition-colors active-press flex items-center justify-between w-full text-left" onClick={() => { setIsMobileMenuOpen(false); if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('kahvalti'), 100); }}>
+              <span>🥞 Serpme Kahvaltı</span> <ChevronRight size={20} className="text-[#c2784f] opacity-80"/>
             </button>
-            <button className="hover:text-[#c2784f] transition-colors active-press flex items-center justify-between w-full text-left" onClick={() => { setIsMobileMenuOpen(false); if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('lezzetler'), 100); }}>
-              <span>Lezzetler</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
+            <button className="hover:text-[#c2784f] transition-colors active-press flex items-center justify-between w-full text-left" onClick={() => { setIsMobileMenuOpen(false); if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('mac-yayini'), 100); }}>
+              <span>⚽ Canlı Maç & Derbi</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
+            </button>
+            <button className="hover:text-[#c2784f] transition-colors active-press flex items-center justify-between w-full text-left" onClick={() => { setIsMobileMenuOpen(false); handleNavToMenu(); }}>
+              <span>🍽️ Dijital Menü & Lezzetler</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
             </button>
             <button className={`hover:text-[#c2784f] transition-colors active-press flex items-center justify-between w-full text-left ${currentView === 'personnel' ? 'text-[#c2784f]' : ''}`} onClick={() => { setIsMobileMenuOpen(false); handleNavToPersonnel(); }}>
-              <span>Ekibimiz</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
+              <span>👥 Ekibimiz</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
+            </button>
+            <button className="hover:text-[#c2784f] transition-colors active-press flex items-center justify-between w-full text-left" onClick={() => { setIsMobileMenuOpen(false); if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('sss'), 100); }}>
+              <span>❓ Sıkça Sorulan Sorular</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
             </button>
             <button className="hover:text-[#c2784f] transition-colors active-press flex items-center justify-between w-full text-left" onClick={() => { setIsMobileMenuOpen(false); if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('iletisim'), 100); }}>
-              <span>İletişim & Konum</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
+              <span>📍 İletişim & Konum</span> <ChevronRight size={20} className="text-[#c2784f] opacity-60"/>
             </button>
             
             <hr className="w-full border-white/10 my-2" />
@@ -1352,14 +1362,38 @@ export default function App() {
         </div>
 
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
-          <h4 className="text-gradient-copper font-black uppercase tracking-[0.3em] mb-10 text-sm lg:text-base">Keşfedin</h4>
-          <ul className="space-y-6 text-sm lg:text-base font-medium mb-10 text-slate-300">
+          <h4 className="text-gradient-copper font-black uppercase tracking-[0.3em] mb-8 text-sm lg:text-base">Keşfedin & Rezervasyon</h4>
+          <ul className="space-y-4 text-sm font-medium mb-8 text-slate-300">
+            <li>
+              <button 
+                onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('kahvalti'), 100); }} 
+                className="hover:text-[#c2784f] text-[#e09f7a] transition-colors flex items-center justify-center md:justify-start gap-3 tracking-widest uppercase text-xs"
+              >
+                <div className="w-2 h-2 rounded-full bg-[#c2784f]"></div> 🥞 Serpme Köy Kahvaltısı
+              </button>
+            </li>
+            <li>
+              <button 
+                onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('mac-yayini'), 100); }} 
+                className="hover:text-[#c2784f] transition-colors flex items-center justify-center md:justify-start gap-3 tracking-widest uppercase text-xs"
+              >
+                <div className="w-2 h-2 rounded-full bg-[#c2784f]"></div> ⚽ Dev Ekran Canlı Maç Yayını
+              </button>
+            </li>
             <li>
               <button 
                 onClick={handleNavToMenu} 
                 className="hover:text-[#c2784f] transition-colors flex items-center justify-center md:justify-start gap-3 tracking-widest uppercase text-xs"
               >
-                <div className="w-2 h-2 rounded-full bg-[#c2784f]"></div> Dijital Menü
+                <div className="w-2 h-2 rounded-full bg-[#c2784f]"></div> 🍽️ Dijital Menü
+              </button>
+            </li>
+            <li>
+              <button 
+                onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('sss'), 100); }} 
+                className="hover:text-[#c2784f] transition-colors flex items-center justify-center md:justify-start gap-3 tracking-widest uppercase text-xs"
+              >
+                <div className="w-2 h-2 rounded-full bg-[#c2784f]"></div> ❓ Sıkça Sorulan Sorular (SSS)
               </button>
             </li>
             <li>
@@ -1367,16 +1401,16 @@ export default function App() {
                 onClick={handleNavToPersonnel} 
                 className="hover:text-[#c2784f] transition-colors flex items-center justify-center md:justify-start gap-3 tracking-widest uppercase text-xs"
               >
-                <div className="w-2 h-2 rounded-full bg-[#c2784f]"></div> Personel Ekibi
+                <div className="w-2 h-2 rounded-full bg-[#c2784f]"></div> 👥 Personel Ekibi
               </button>
             </li>
           </ul>
           
           <button 
             onClick={() => setShowLoginModal(true)} 
-            className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-6 py-3 lg:px-8 lg:py-4 rounded-2xl text-sm lg:text-base font-black uppercase tracking-widest flex items-center gap-3 transition-all border border-slate-700 hover:border-slate-600 shadow-lg hover:shadow-xl hover:-translate-y-1 mt-auto"
+            className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-6 py-3 lg:px-8 lg:py-4 rounded-2xl text-xs lg:text-sm font-black uppercase tracking-widest flex items-center gap-3 transition-all border border-slate-700 hover:border-slate-600 shadow-lg hover:shadow-xl hover:-translate-y-1 mt-auto"
           >
-            <Lock size={18} /> Personel Girişi
+            <Lock size={16} /> Personel Girişi
           </button>
         </div>
       </div>
@@ -2094,12 +2128,17 @@ export default function App() {
 
            <div className="relative z-10 text-center px-4 sm:px-6 w-full max-w-6xl mx-auto flex flex-col items-center justify-center h-full">
               
+              {/* SEO Konum & İmza Rozeti */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#c2784f]/15 border border-[#c2784f]/35 text-[#e09f7a] text-[11px] sm:text-xs font-black tracking-widest uppercase mb-4 sm:mb-6 animate-fade-in-up shadow-[0_0_20px_rgba(194,120,79,0.25)]">
+                <Sparkles size={13} className="text-[#c2784f]" /> Gebze'nin 1 Numaralı Serpme Kahvaltı &amp; Canlı Maç Mekanı
+              </div>
+
               <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white font-serif mb-4 sm:mb-6 drop-shadow-2xl animate-fade-in-up leading-[1.12]">
-                Lezzet ve <span className="text-gradient-copper italic font-light">Muhabbetin</span> Adresi
+                Gebze'nin En Sevilen <span className="text-gradient-copper italic font-light">Serpme Kahvaltısı</span> &amp; Lezzet Durağı
               </h1>
               
               <p className="text-sm sm:text-lg lg:text-xl text-slate-300 max-w-3xl mx-auto font-light tracking-wide mb-8 sm:mb-12 leading-relaxed drop-shadow-md animate-fade-in-up delay-100">
-                Şehrin gürültüsünden uzak, samimi atmosferimizde unutulmaz tatlar ve anılar biriktirin.
+                25+ çeşit taze serpme köy kahvaltısı, dev ekranda canlı derbi maç heyecanı, zengin dünya mutfağı ve nezih bahçe atmosferiyle Salaaş Cafe Restaurant'ta buluşun.
               </p>
               
               {/* Eylem Butonları: Rezervasyon + Menü */}
@@ -2121,22 +2160,25 @@ export default function App() {
               
               {/* Kategori Rozetleri */}
               <div className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-8 text-[10px] sm:text-xs font-black tracking-widest uppercase text-slate-200 animate-fade-in-up delay-300">
-                 <button onClick={handleNavToMenu} className="flex items-center gap-2 glass px-5 py-2.5 sm:px-6 sm:py-3 rounded-full shadow-lg hover:border-[#c2784f]/50 hover:bg-[#c2784f]/10 transition-all active-press">
-                   <Coffee size={16} className="text-[#c2784f]"/> Kahvaltı
+                 <button onClick={() => handleScrollToId('kahvalti')} className="flex items-center gap-2 glass px-5 py-2.5 sm:px-6 sm:py-3 rounded-full shadow-lg hover:border-[#c2784f]/50 hover:bg-[#c2784f]/15 transition-all active-press border-[#c2784f]/30 text-[#e09f7a]">
+                   <Coffee size={16} className="text-[#c2784f]"/> 🥞 Serpme Kahvaltı
+                 </button>
+                 <button onClick={() => handleScrollToId('mac-yayini')} className="flex items-center gap-2 glass px-5 py-2.5 sm:px-6 sm:py-3 rounded-full shadow-lg hover:border-[#c2784f]/50 hover:bg-[#c2784f]/15 transition-all active-press">
+                   <Tv size={16} className="text-[#c2784f]"/> ⚽ Canlı Maç Yayını
                  </button>
                  <button onClick={handleNavToMenu} className="flex items-center gap-2 glass px-5 py-2.5 sm:px-6 sm:py-3 rounded-full shadow-lg hover:border-[#c2784f]/50 hover:bg-[#c2784f]/10 transition-all active-press">
-                   <UtensilsCrossed size={16} className="text-[#c2784f]"/> Izgara & Burger
+                   <UtensilsCrossed size={16} className="text-[#c2784f]"/> 🥩 Izgara &amp; Burger
                  </button>
                  <button onClick={handleNavToMenu} className="flex items-center gap-2 glass px-5 py-2.5 sm:px-6 sm:py-3 rounded-full shadow-lg hover:border-[#c2784f]/50 hover:bg-[#c2784f]/10 transition-all active-press">
-                   <Wind size={16} className="text-[#c2784f]"/> Nargile & İçecek
+                   <Wind size={16} className="text-[#c2784f]"/> 💨 Nargile &amp; İçecek
                  </button>
               </div>
 
-              {/* Keşfet Kaydırma İndikatörü (Tam Ortalanmış & Butonların Altında) */}
+              {/* Keşfet Kaydırma İndikatörü */}
               <div 
                 className="mt-8 sm:mt-12 flex flex-col items-center justify-center text-center text-white/50 hover:text-[#c2784f] transition-colors cursor-pointer animate-bounce pointer-events-auto"
-                onClick={() => handleScrollToId('hakkimizda')}
-                title="Aşağı Kaydır"
+                onClick={() => handleScrollToId('kahvalti')}
+                title="Kahvaltı Bölümüne Kaydır"
               >
                  <span className="text-[10px] tracking-[0.25em] uppercase font-bold block mb-1.5 opacity-70 text-center pl-1">Keşfet</span>
                  <div className="w-5 h-8 sm:w-6 sm:h-9 border-2 border-white/25 rounded-full flex justify-center p-1 shadow-lg bg-black/20 backdrop-blur-sm">
@@ -2206,6 +2248,180 @@ export default function App() {
             </div>
           </section>
 
+          {/* GEBZE SERPME KAHVALTI BÖLÜMÜ (EN ÖNCELİKLİ SEO BÖLÜMÜ) */}
+          <section id="kahvalti" className="w-full py-20 sm:py-28 md:py-36 bg-[#0d0c0a] text-white relative overflow-hidden border-t border-b border-white/5">
+            {/* Arkaplan Işık Efektleri */}
+            <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-[#c2784f]/10 rounded-full blur-[160px] pointer-events-none"></div>
+            <div className="absolute bottom-10 left-0 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none"></div>
+            <div className="absolute inset-0 opacity-[0.03] w-full h-full pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #ffffff 2px, transparent 2px)', backgroundSize: '40px 40px' }}></div>
+
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+              
+              {/* Başlık & SEO Açıklama */}
+              <div className="text-center max-w-4xl mx-auto mb-16 sm:mb-20">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#c2784f]/15 border border-[#c2784f]/35 text-[#e09f7a] text-[10px] sm:text-xs font-black tracking-widest uppercase mb-4 shadow-[0_0_20px_rgba(194,120,79,0.2)]">
+                  <Coffee size={14} className="text-[#c2784f]" /> GEBZE'NİN 1 NUMARALI KAHVALTI ADRESİ
+                </div>
+                
+                <h2 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-light text-white mb-6 leading-tight">
+                  Gebze'nin En Zengin <br/>
+                  <span className="text-gradient-copper italic font-black">Serpme Köy Kahvaltısı</span>
+                </h2>
+                
+                <p className="text-sm sm:text-base lg:text-lg text-slate-300 font-light leading-relaxed max-w-3xl mx-auto">
+                  Güne enfes bir başlangıç için Gebze'de doğru adrestesiniz! Özenle seçilmiş 25'ten fazla doğal köy ürünü, sıcacık çıtır pişiler, sahanda tereyağlı sucuklu yumurta, manda kaymağı ve organik petek bal eşliğinde sınırsız semaver çayıyla unutulmaz bir kahvaltı şöleni sunuyoruz.
+                </p>
+              </div>
+
+              {/* Tek ve Görkemli Serpme Köy Kahvaltısı Vitrin Kartı */}
+              <div className="max-w-5xl mx-auto mb-16">
+                <div className="glass-card rounded-[2.5rem] overflow-hidden border border-[#c2784f]/40 hover:border-[#c2784f]/70 transition-all duration-500 shadow-2xl group flex flex-col">
+                  
+                  {/* Üst Görsel ve Karşılama Başlığı */}
+                  <div className="relative h-72 sm:h-96 lg:h-[460px] w-full overflow-hidden">
+                    <img 
+                      src="/salaskoy.jpg" 
+                      alt="Gebze Salaaş Serpme Köy Kahvaltısı" 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                    
+                    <div className="absolute top-4 sm:top-6 left-4 sm:left-6 flex flex-wrap gap-2">
+                      <span className="px-4 py-2 rounded-full bg-black/75 backdrop-blur-md border border-[#c2784f]/60 text-[#e09f7a] text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shadow-xl">
+                        <Star size={13} className="text-[#c2784f] fill-[#c2784f]"/> GEBZE'NİN İMZA LEZZETİ
+                      </span>
+                      <span className="px-4 py-2 rounded-full bg-[#c2784f]/25 backdrop-blur-md border border-[#c2784f]/40 text-white text-[10px] sm:text-xs font-bold uppercase tracking-wider hidden sm:flex items-center gap-1.5">
+                        🥞 25+ ÇEŞİT DOĞAL KÖY KAHVALTISI
+                      </span>
+                    </div>
+
+                    <div className="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-10 sm:right-10">
+                      <h3 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white font-light drop-shadow-lg">
+                        Salaaş <span className="text-gradient-copper font-black italic">Serpme Köy Kahvaltısı</span>
+                      </h3>
+                      <p className="text-sm sm:text-base text-slate-300 font-light mt-2 max-w-2xl leading-relaxed">
+                        Doğal çiftlik ürünleri, sahanda sıcacık pişen sucuk ve yumurta, çıtır pişiler ve masanıza özel sınırsız demlik çay.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Zengin İçerik Listesi (Geniş 2 Sütunlu Izgara) */}
+                  <div className="p-6 sm:p-10 lg:p-12 flex flex-col justify-between bg-black/20">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8 text-xs sm:text-sm text-slate-300 font-light">
+                      <div className="flex items-start gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                        <CheckCircle2 size={18} className="text-[#c2784f] shrink-0 mt-0.5" />
+                        <div>
+                          <strong className="text-white block font-medium mb-0.5">🍳 Sahanda Sıcaklar &amp; Hamur İşi:</strong>
+                          <span>Sahanda tereyağlı sucuklu yumurta, menemen veya sıcak kuymak, sıcacık puf pişiler ve ekmek sepeti.</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                        <CheckCircle2 size={18} className="text-[#c2784f] shrink-0 mt-0.5" />
+                        <div>
+                          <strong className="text-white block font-medium mb-0.5">🧀 Yöresel Doğal Peynirler:</strong>
+                          <span>Ezine tam yağlı beyaz peynir, eski kaşar, tulum peyniri, tel çeçil ve taze kahvaltılık lor.</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                        <CheckCircle2 size={18} className="text-[#c2784f] shrink-0 mt-0.5" />
+                        <div>
+                          <strong className="text-white block font-medium mb-0.5">🍯 Tatlılar &amp; Bal-Kaymak:</strong>
+                          <span>Hakiki organik petek bal, manda kaymağı, ev yapımı reçeller, tereyağı ve özel acuka ezmesi.</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                        <CheckCircle2 size={18} className="text-[#c2784f] shrink-0 mt-0.5" />
+                        <div>
+                          <strong className="text-white block font-medium mb-0.5">🫒 Zeytin &amp; Taze Bahçe Söğüşü:</strong>
+                          <span>Gemlik siyah zeytin, Hatay kırma yeşil zeytin, salkım domates, çıtır salatalık ve taze yeşillikler.</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Sınırsız Semaver Çay Vurgusu */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#c2784f]/10 border border-[#c2784f]/30 flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                      <div className="flex items-center gap-3 text-center sm:text-left">
+                        <div className="w-10 h-10 rounded-xl bg-[#c2784f]/20 border border-[#c2784f]/30 flex items-center justify-center text-[#e09f7a] shrink-0">
+                          <Coffee size={20} />
+                        </div>
+                        <div>
+                          <span className="font-bold text-white text-sm block">Sınırsız Demlik Çay İkramımızdır</span>
+                          <span className="text-xs text-slate-400 font-light">Kahvaltınız boyunca masanıza özel taze demlenen Rize çayı kesintisiz servis edilir.</span>
+                        </div>
+                      </div>
+                      <span className="text-xs font-black uppercase tracking-widest text-[#e09f7a] border border-[#c2784f]/30 px-3 py-1.5 rounded-full shrink-0">
+                        SINIRSIZ SERVİS
+                      </span>
+                    </div>
+
+                    {/* Eylem Butonları */}
+                    <div className="pt-2 flex flex-col sm:flex-row gap-4">
+                      <button 
+                        onClick={() => { setRequestData({...requestData, type: 'kahvalti'}); setShowRequestModal(true); }}
+                        className="flex-1 btn-premium py-4 px-8 rounded-2xl text-xs sm:text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2.5 shadow-2xl active-press glow-copper"
+                      >
+                        <CalendarDays size={18} /> Kahvaltı Masası Ayırt
+                      </button>
+                      <a 
+                        href={`https://wa.me/${WHATSAPP_NO}?text=${encodeURIComponent('Merhaba Salaaş Cafe, Gebze serpme köy kahvaltısı için masa ayırtmak istiyorum.')}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn-outline-premium py-4 px-6 rounded-2xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:border-[#c2784f] active-press bg-white/5"
+                      >
+                        <MessageCircle size={18} className="text-[#25D366]" /> WhatsApp'tan Sor
+                      </a>
+                      <button 
+                        onClick={handleNavToMenu}
+                        className="btn-outline-premium py-4 px-6 rounded-2xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:border-[#c2784f] active-press"
+                      >
+                        <UtensilsCrossed size={17} className="text-[#c2784f]" /> Menüde Gör
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 Önemli Güvence Rozeti */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pt-4">
+                <div className="glass p-5 rounded-2xl border border-white/10 text-center flex flex-col items-center">
+                  <div className="w-12 h-12 rounded-xl bg-[#c2784f]/15 border border-[#c2784f]/30 text-[#e09f7a] flex items-center justify-center mb-3">
+                    <Flame size={22} />
+                  </div>
+                  <h4 className="font-bold text-white text-sm mb-1">Sıcak &amp; Anında Servis</h4>
+                  <p className="text-[11px] text-slate-400 font-light">Siparişinize özel anında masanıza gelen sıcacık sahanda lezzetler</p>
+                </div>
+
+                <div className="glass p-5 rounded-2xl border border-white/10 text-center flex flex-col items-center">
+                  <div className="w-12 h-12 rounded-xl bg-[#c2784f]/15 border border-[#c2784f]/30 text-[#e09f7a] flex items-center justify-center mb-3">
+                    <ChefHat size={22} />
+                  </div>
+                  <h4 className="font-bold text-white text-sm mb-1">Yöresel &amp; Doğal</h4>
+                  <p className="text-[11px] text-slate-400 font-light">Çiftlik yumurtası, manda kaymağı ve organik petek bal</p>
+                </div>
+
+                <div className="glass p-5 rounded-2xl border border-white/10 text-center flex flex-col items-center">
+                  <div className="w-12 h-12 rounded-xl bg-[#c2784f]/15 border border-[#c2784f]/30 text-[#e09f7a] flex items-center justify-center mb-3">
+                    <Coffee size={22} />
+                  </div>
+                  <h4 className="font-bold text-white text-sm mb-1">Sınırsız Demlik Çay</h4>
+                  <p className="text-[11px] text-slate-400 font-light">Kahvaltınız süresince taze demlenen kesintisiz Rize çayı</p>
+                </div>
+
+                <div className="glass p-5 rounded-2xl border border-white/10 text-center flex flex-col items-center">
+                  <div className="w-12 h-12 rounded-xl bg-[#c2784f]/15 border border-[#c2784f]/30 text-[#e09f7a] flex items-center justify-center mb-3">
+                    <Users size={22} />
+                  </div>
+                  <h4 className="font-bold text-white text-sm mb-1">300 Kişilik Bahçe</h4>
+                  <p className="text-[11px] text-slate-400 font-light">Geniş oturma düzeni, çocuk dostu alan ve kolay otopark</p>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
           {/* VİTRİNİMİZ / BUNU DENEDİNİZ Mİ */}
           <section id="lezzetler" className="w-full py-20 sm:py-28 md:py-36 bg-[#0a0908] relative">
             <div className="absolute top-1/4 left-0 w-72 h-72 bg-[#c2784f]/10 rounded-full blur-[140px] pointer-events-none"></div>
@@ -2248,6 +2464,173 @@ export default function App() {
                   </div>
                 ))}
               </div>
+            </div>
+          </section>
+
+          {/* CANLI MAÇ & DERBİ YAYINI BÖLÜMÜ (DEV EKRAN CANLI YAYINLAR) */}
+          <section id="mac-yayini" className="w-full py-20 sm:py-28 md:py-36 bg-[#080706] text-white relative overflow-hidden border-t border-b border-white/5">
+            {/* Atmosferik Stadyum Yeşil & Bakır Işıltıları */}
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-emerald-500/10 rounded-full blur-[170px] pointer-events-none"></div>
+            <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#c2784f]/10 rounded-full blur-[160px] pointer-events-none"></div>
+            <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #ffffff 2px, transparent 2px)', backgroundSize: '40px 40px' }}></div>
+
+            <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+              
+              <div className="text-center max-w-4xl mx-auto mb-16 sm:mb-20">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/35 text-emerald-400 text-[10px] sm:text-xs font-black tracking-widest uppercase mb-4 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                  <Tv size={14} className="text-emerald-400" /> GEBZE'DE CANLI MAÇ &amp; DERBİ HEYECANI
+                </div>
+                
+                <h2 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-light text-white mb-6 leading-tight">
+                  Dev Ekranda Canlı <br/>
+                  <span className="text-gradient-copper italic font-black">Maç &amp; Derbi Keyfi</span>
+                </h2>
+                
+                <p className="text-sm sm:text-base lg:text-lg text-slate-300 font-light leading-relaxed max-w-3xl mx-auto">
+                  Trendyol Süper Lig derbileri (Galatasaray, Fenerbahçe, Beşiktaş, Trabzonspor), Avrupa Kupaları ve A Milli Takım karşılaşmaları dev LED ekranlarda kesintisiz yüksek çözünürlüklü HD yayın kalitesiyle Salaaş Cafe'de! Donmasız yayın ve stadyum coşkusuyla yerinizi şimdiden ayırtın.
+                </p>
+              </div>
+
+              {/* 4 Ana Maç Özelliği Kartı */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                
+                <div className="glass-card rounded-2xl p-6 border border-white/10 hover:border-emerald-500/40 transition-all group">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Tv size={24} />
+                  </div>
+                  <h4 className="font-serif text-lg text-white font-medium mb-2">Dev LED Ekranlar</h4>
+                  <p className="text-xs text-slate-400 font-light leading-relaxed">
+                    Mekanın her açısından net görüş sağlayan geniş projeksiyon ve çoklu HD ekran donanımı.
+                  </p>
+                </div>
+
+                <div className="glass-card rounded-2xl p-6 border border-white/10 hover:border-[#c2784f]/40 transition-all group">
+                  <div className="w-12 h-12 rounded-xl bg-[#c2784f]/15 border border-[#c2784f]/30 text-[#e09f7a] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Trophy size={24} />
+                  </div>
+                  <h4 className="font-serif text-lg text-white font-medium mb-2">Tüm Derbiler &amp; Ligler</h4>
+                  <p className="text-xs text-slate-400 font-light leading-relaxed">
+                    Kesintisiz yüksek çözünürlüklü HD yayın akışıyla donma ve gecikme olmadan tüm lig maçlarında stadyum keyfi.
+                  </p>
+                </div>
+
+                <div className="glass-card rounded-2xl p-6 border border-white/10 hover:border-amber-500/40 transition-all group">
+                  <div className="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <UtensilsCrossed size={24} />
+                  </div>
+                  <h4 className="font-serif text-lg text-white font-medium mb-2">Maç Menüsü &amp; Burger</h4>
+                  <p className="text-xs text-slate-400 font-light leading-relaxed">
+                    Çıtır patates kovaları, ev yapımı burgerler, çıtır tavuk atıştırmalıkları ve buz gibi içecekler.
+                  </p>
+                </div>
+
+                <div className="glass-card rounded-2xl p-6 border border-white/10 hover:border-[#c2784f]/40 transition-all group">
+                  <div className="w-12 h-12 rounded-xl bg-[#c2784f]/15 border border-[#c2784f]/30 text-[#e09f7a] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Wind size={24} />
+                  </div>
+                  <h4 className="font-serif text-lg text-white font-medium mb-2">Nargile &amp; Sıcak Sohbet</h4>
+                  <p className="text-xs text-slate-400 font-light leading-relaxed">
+                    Maç heyecanına eşlik eden özel nargile aromaları, taze kahveler ve konforlu oturma grupları.
+                  </p>
+                </div>
+
+              </div>
+
+              {/* Canlı Yayın Programı & Hızlı Rezervasyon Banner'ı */}
+              <div className="card-luxury rounded-3xl p-6 sm:p-10 border border-emerald-500/25 shadow-2xl relative overflow-hidden">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                  <div className="text-center md:text-left">
+                    <span className="text-[10px] font-black tracking-[0.3em] uppercase text-emerald-400 block mb-2">CANLI YAYIN PROGRAMI</span>
+                    <h3 className="text-2xl sm:text-3xl font-serif text-white font-light">
+                      Büyük Derbilerde <span className="text-gradient-copper italic font-black">Yerinizi Garantileyin</span>
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-300 font-light mt-2 max-w-xl">
+                      Derbi günleri yoğunluk yaşanmaktadır. Siz ve arkadaş grubunuz için en iyi görüş açısına sahip masayı erkenden ayırtın.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
+                    <button 
+                      onClick={() => { setRequestData({...requestData, type: 'mac'}); setShowRequestModal(true); }}
+                      className="btn-premium py-4 px-8 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2.5 shadow-2xl active-press glow-copper"
+                    >
+                      <CalendarDays size={17} /> Maç Masası Ayırt
+                    </button>
+                    <a 
+                      href={`https://wa.me/${WHATSAPP_NO}?text=${encodeURIComponent('Merhaba Salaaş Cafe, canlı derbi maç yayını için masa ayırtmak istiyorum.')}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn-outline-premium py-4 px-7 rounded-2xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:border-emerald-500 active-press bg-white/5"
+                    >
+                      <MessageCircle size={17} className="text-[#25D366]" /> WhatsApp'tan Ayırt
+                    </a>
+                  </div>
+                </div>
+
+                {/* Daima Güncel Yayın Programı Kartları */}
+                <div className="mt-8 pt-8 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  
+                  <div className="bg-black/40 border border-white/10 rounded-2xl p-5 flex flex-col justify-between hover:border-emerald-500/40 transition-colors">
+                    <div>
+                      <div className="flex justify-between items-center text-[10px] text-slate-400 font-mono mb-2">
+                        <span className="text-emerald-400 font-bold flex items-center gap-1"><Tv size={11} /> Canlı HD Yayın</span>
+                        <span className="text-slate-400">Hafta Sonu &amp; Derbi Günleri</span>
+                      </div>
+                      <h4 className="text-base font-serif font-medium text-white mb-1">Süper Lig Derbileri</h4>
+                      <p className="text-xs text-slate-400 font-light">Galatasaray, Fenerbahçe, Beşiktaş, Trabzonspor ve tüm lig heyecanı</p>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => { setRequestData({...requestData, type: 'mac', notes: 'Süper Lig derbi maçı için masa talebi'}); setShowRequestModal(true); }}
+                      className="text-xs font-black text-[#e09f7a] hover:text-white uppercase tracking-wider mt-4 pt-3 border-t border-white/5 flex items-center justify-between transition-colors"
+                    >
+                      <span>Derbi Masası Ayırt</span>
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
+
+                  <div className="bg-black/40 border border-white/10 rounded-2xl p-5 flex flex-col justify-between hover:border-emerald-500/40 transition-colors">
+                    <div>
+                      <div className="flex justify-between items-center text-[10px] text-slate-400 font-mono mb-2">
+                        <span className="text-emerald-400 font-bold flex items-center gap-1"><Trophy size={11} /> Canlı HD Yayın</span>
+                        <span className="text-slate-400">Salı &amp; Çarşamba Akşamları</span>
+                      </div>
+                      <h4 className="text-base font-serif font-medium text-white mb-1">Şampiyonlar Ligi &amp; Avrupa</h4>
+                      <p className="text-xs text-slate-400 font-light">UEFA Şampiyonlar Ligi, Avrupa Ligi ve Konferans Ligi karşılaşmaları</p>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => { setRequestData({...requestData, type: 'mac', notes: 'Avrupa kupaları maçı için masa talebi'}); setShowRequestModal(true); }}
+                      className="text-xs font-black text-[#e09f7a] hover:text-white uppercase tracking-wider mt-4 pt-3 border-t border-white/5 flex items-center justify-between transition-colors"
+                    >
+                      <span>Avrupa Masası Ayırt</span>
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
+
+                  <div className="bg-black/40 border border-white/10 rounded-2xl p-5 flex flex-col justify-between hover:border-emerald-500/40 transition-colors">
+                    <div>
+                      <div className="flex justify-between items-center text-[10px] text-slate-400 font-mono mb-2">
+                        <span className="text-emerald-400 font-bold flex items-center gap-1"><Tv size={11} /> Canlı HD Yayın</span>
+                        <span className="text-slate-400">Fikstür Günleri</span>
+                      </div>
+                      <h4 className="text-base font-serif font-medium text-white mb-1">Milli Maçlar &amp; Kupalar</h4>
+                      <p className="text-xs text-slate-400 font-light">A Milli Takım, Türkiye Kupası ve tüm özel futbol geceleri</p>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => { setRequestData({...requestData, type: 'mac', notes: 'Milli maç / kupa yayını için masa talebi'}); setShowRequestModal(true); }}
+                      className="text-xs font-black text-[#e09f7a] hover:text-white uppercase tracking-wider mt-4 pt-3 border-t border-white/5 flex items-center justify-between transition-colors"
+                    >
+                      <span>Önceden Yer Ayırt</span>
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+
             </div>
           </section>
 
@@ -2296,6 +2679,108 @@ export default function App() {
                  </div>
                </div>
              </div>
+          </section>
+
+          {/* SIKÇA SORULAN SORULAR / SEO SSS (GOOGLE FAQ RICH CARDS İLE BİREBİR UYUMLU) */}
+          <section id="sss" className="w-full py-20 sm:py-28 md:py-36 bg-[#0a0908] text-white relative overflow-hidden border-t border-white/5">
+            <div className="absolute top-1/3 left-1/4 w-[450px] h-[450px] bg-[#c2784f]/10 rounded-full blur-[160px] pointer-events-none"></div>
+            <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-white/5 rounded-full blur-[150px] pointer-events-none"></div>
+
+            <div className="w-full max-w-5xl mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
+              
+              <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-18">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#c2784f]/15 border border-[#c2784f]/35 text-[#e09f7a] text-[10px] sm:text-xs font-black tracking-widest uppercase mb-4 shadow-[0_0_20px_rgba(194,120,79,0.2)]">
+                  <HelpCircle size={14} className="text-[#c2784f]" /> SIKÇA SORULAN SORULAR
+                </div>
+                
+                <h2 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-light text-white mb-6 leading-tight">
+                  Merak <span className="text-gradient-copper italic font-black">Edilenler</span>
+                </h2>
+                
+                <p className="text-sm sm:text-base text-slate-300 font-light leading-relaxed">
+                  Gebze serpme kahvaltı, dev ekranda derbi maç yayınları ve rezervasyon süreçleri hakkında en çok sorulan soruların yanıtları.
+                </p>
+              </div>
+
+              {/* Akordiyon Listesi */}
+              <div className="space-y-4">
+                {[
+                  {
+                    q: "Gebze'de en iyi serpme kahvaltı nerede yenir?",
+                    a: "Gebze'de zengin serpme köy kahvaltısı için Salaaş Cafe Restaurant en popüler ve ferah mekandır. 25'ten fazla çeşit taze köy ürünü, sahanda sucuklu yumurta, menemen, sıcacık çıtır pişiler, manda kaymağı, organik petek bal ve masanıza özel sınırsız demlik çay eşliğinde servis edilmektedir."
+                  },
+                  {
+                    q: "Salaaş Cafe Gebze'de derbi ve canlı maç yayını var mı?",
+                    a: "Evet! Salaaş Cafe'de tüm Trendyol Süper Lig derbileri (Galatasaray, Fenerbahçe, Beşiktaş, Trabzonspor), UEFA Şampiyonlar Ligi, Avrupa Ligi ve Milli maçlar dev LED ekranlarda kesintisiz yüksek çözünürlüklü HD yayın ve stadyum akustiğiyle canlı yayınlanmaktadır."
+                  },
+                  {
+                    q: "Gebze serpme kahvaltı ve derbi maçları için rezervasyon gerekli mi?",
+                    a: "Hafta sonu serpme kahvaltısı saatlerinde (10:00 - 14:00) ve büyük derbi maç akşamlarında mekanımızda yoğun talep yaşandığı için web sitemizdeki rezervasyon formundan veya 0536 017 02 08 numaralı WhatsApp hattımızdan önceden masa ayırtmanız tavsiye edilir."
+                  },
+                  {
+                    q: "Salaaş Cafe Restaurant'ta otopark ve bahçe alanı var mı?",
+                    a: "Evet, Salaaş Cafe Restaurant 300 kişilik geniş açık hava bahçe ve konforlu kapalı salon alanına sahiptir. Ailenizle, sevdiklerinizle ve kalabalık arkadaş gruplarınızla huzurlu vakit geçirebileceğiniz ferah oturma düzeni ve otopark kolaylığı sunulmaktadır."
+                  }
+                ].map((item, idx) => {
+                  const isOpen = openFaq === idx;
+                  return (
+                    <div 
+                      key={idx}
+                      className={`glass-card rounded-2xl sm:rounded-3xl border transition-all duration-300 overflow-hidden ${
+                        isOpen ? 'border-[#c2784f]/60 bg-[#141210] shadow-[0_10px_30px_rgba(194,120,79,0.15)]' : 'border-white/10 hover:border-white/25 bg-black/40'
+                      }`}
+                    >
+                      <button 
+                        type="button"
+                        onClick={() => setOpenFaq(isOpen ? null : idx)}
+                        className="w-full p-5 sm:p-7 text-left flex items-center justify-between gap-4 active-press"
+                        aria-expanded={isOpen}
+                      >
+                        <span className={`font-serif text-base sm:text-xl font-medium transition-colors ${isOpen ? 'text-[#e09f7a]' : 'text-white'}`}>
+                          {item.q}
+                        </span>
+                        <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 border transition-all duration-300 ${
+                          isOpen ? 'bg-[#c2784f] text-white border-[#c2784f] rotate-180 shadow-md shadow-[#c2784f]/30' : 'bg-white/5 text-slate-400 border-white/10'
+                        }`}>
+                          <ChevronDown size={18} />
+                        </div>
+                      </button>
+
+                      {isOpen && (
+                        <div className="px-5 sm:px-7 pb-6 sm:pb-7 pt-1 text-slate-300 text-xs sm:text-base font-light leading-relaxed border-t border-white/5 animate-in fade-in duration-200">
+                          <p>{item.a}</p>
+                          <div className="mt-4 pt-3 flex flex-wrap gap-3">
+                            <button 
+                              onClick={() => { setRequestData({...requestData, type: idx === 1 ? 'mac' : 'kahvalti'}); setShowRequestModal(true); }}
+                              className="text-xs font-bold text-[#e09f7a] hover:text-white uppercase tracking-wider flex items-center gap-1.5 transition-colors"
+                            >
+                              <span>Hemen Masa Ayırt</span> <ArrowRight size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Ek Soru / WhatsApp İletişim Kutusu */}
+              <div className="mt-12 text-center p-8 glass-card rounded-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="text-center sm:text-left">
+                  <h4 className="font-serif text-lg text-white font-medium mb-1">Başka Bir Sorunuz mu Var?</h4>
+                  <p className="text-xs sm:text-sm text-slate-400 font-light">Ekibimiz merak ettiğiniz her konuda 7/24 WhatsApp üzerinden yardımcı olmaktan mutluluk duyar.</p>
+                </div>
+                <a 
+                  href={`https://wa.me/${WHATSAPP_NO}?text=${encodeURIComponent('Merhaba Salaaş Cafe, bir sorum vardı.')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-premium px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest inline-flex items-center gap-2 shadow-xl shrink-0 active-press"
+                >
+                  <MessageCircle size={17} /> WhatsApp ile Sorun
+                </a>
+              </div>
+
+            </div>
           </section>
 
         </main>

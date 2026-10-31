@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- Ana Sayfa (Gebze Serpme Kahvaltı, Canlı Maç Yayını & Cafe) -->
+  <url>
+    <loc>https://salaascaferestaurant.com.tr/</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://salaascaferestaurant.com.tr/salaskoy.jpg</image:loc>
+      <image:title>Gebze Serpme Köy Kahvaltısı - Salaaş Cafe Restaurant</image:title>
+      <image:caption>Gebze'nin en zengin serpme köy kahvaltısı, pişi ve sahanda lezzetler</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://salaascaferestaurant.com.tr/salaaslogobg.png</image:loc>
+      <image:title>Salaaş Cafe Restaurant Logo Gebze</image:title>
+    </image:image>
+  </url>
+
+  <!-- Gebze Serpme Kahvaltı Bölümü -->
+  <url>
+    <loc>https://salaascaferestaurant.com.tr/#kahvalti</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- Dijital Menü -->
+  <url>
+    <loc>https://salaascaferestaurant.com.tr/#lezzetler</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- Dev Ekran Canlı Maç & Derbi Yayını -->
+  <url>
+    <loc>https://salaascaferestaurant.com.tr/#mac-yayini</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- Davet ve Özel Organizasyonlar -->
+  <url>
+    <loc>https://salaascaferestaurant.com.tr/#organizasyon</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Hikayemiz & Hakkımızda -->
+  <url>
+    <loc>https://salaascaferestaurant.com.tr/#hakkimizda</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- İletişim, Konum & Rezervasyon -->
+  <url>
+    <loc>https://salaascaferestaurant.com.tr/#iletisim</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+</urlset>

@@ -1,0 +1,11 @@
+# ==========================================
+# Salaaş Cafe Restaurant Robots.txt
+# https://salaascaferestaurant.com.tr
+# ==========================================
+
+User-agent: *
+Allow: /
+Disallow: /#admin
+
+# Search Console Sitemap Reference
+Sitemap: https://salaascaferestaurant.com.tr/sitemap.xml
