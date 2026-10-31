@@ -5,7 +5,8 @@ import {
   Printer, MessageSquareText, MessageCircle, Map, Flame, BellRing, 
   MonitorPlay, Lock, ArrowRight, MapPin, Instagram, Wind, Coffee, 
   ChevronRight, Star, Inbox, CheckCircle2, AlertTriangle, History, MenuSquare,
-  Image as ImageIcon, AlignLeft, DollarSign, UploadCloud, GripVertical, UserSquare, Menu
+  Image as ImageIcon, AlignLeft, DollarSign, UploadCloud, GripVertical, UserSquare, Menu,
+  Home, Smartphone, Copy, Sparkles, Share2, Eye, Calendar, CheckSquare
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
@@ -20,7 +21,7 @@ if (typeof document !== 'undefined') {
     viewportMeta.name = 'viewport';
     document.head.appendChild(viewportMeta);
   }
-  viewportMeta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+  viewportMeta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
 }
 
 // --- FIREBASE AYARLARI ---
@@ -113,15 +114,47 @@ export default function App() {
 
   const typeLabels = { kahvalti: 'Kahvaltı', yemek: 'Yemek', dogum_gunu: 'Doğum Günü', organizasyon: 'Organizasyon', mac: 'Maç Yayını' };
 
+  // --- KALICI AUTH VE MOBİL / PWA BAŞLANGIÇ YÖNLENDİRMESİ ---
+  const getInitialAuth = () => {
+    try {
+      return localStorage.getItem('salaas_admin_auth') === 'true';
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const getInitialView = () => {
+    try {
+      const hash = (typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '');
+      const search = (typeof window !== 'undefined' ? window.location.search : '');
+      const pathname = (typeof window !== 'undefined' ? window.location.pathname : '');
+      
+      if (hash === 'admin' || search.includes('admin') || pathname === '/admin') {
+        return 'admin';
+      }
+      if (hash === 'menu') return 'menu';
+      if (hash === 'personnel') return 'personnel';
+      
+      // iPhone Safari "Telefona Ekle" (Standalone Modu)
+      if (typeof window !== 'undefined' && window.navigator?.standalone && localStorage.getItem('salaas_admin_auth') === 'true') {
+        return 'admin';
+      }
+    } catch (e) {}
+    return 'landing';
+  };
+
   // --- STATE ---
-  const [currentView, setCurrentView] = useState('landing');
-  const [activeAdminTab, setActiveAdminTab] = useState('restoran');
+  const [currentView, setCurrentView] = useState(getInitialView);
+  const [activeAdminTab, setActiveAdminTab] = useState('talepler'); // Talepler öncelikli
   
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(getInitialAuth);
+  const [rememberMe, setRememberMe] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginUser, setLoginUser] = useState('');
   const [loginPass, setLoginPass] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [showAdminPwaGuide, setShowAdminPwaGuide] = useState(true);
+  const [previousPendingCount, setPreviousPendingCount] = useState(0);
   
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -237,44 +270,112 @@ export default function App() {
   }, [activeMenuCategories, activeCategory]);
 
   useEffect(() => {
-    if (currentView !== 'menu') return;
+    if (currentView !== 'menu' || activeMenuCategories.length === 0) return;
 
-    let timeoutId;
+    let ticking = false;
     const handleScrollSpy = () => {
-      if (timeoutId) clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-          const scrollPosition = window.scrollY + 160; 
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const headerOffset = 180; 
+          let currentCatId = activeMenuCategories[0]?.id;
           
-          for (let i = activeMenuCategories.length - 1; i >= 0; i--) {
-            const cat = activeMenuCategories[i];
+          for (const cat of activeMenuCategories) {
             const el = document.getElementById(`cat-${cat.id}`);
-            if (el && el.offsetTop <= scrollPosition) {
-              setActiveCategory(cat.id);
-              const btn = document.getElementById(`btn-${cat.id}`);
-              if (btn && btn.parentNode) {
-                const container = btn.parentNode;
-                const scrollLeft = btn.offsetLeft - (container.offsetWidth / 2) + (btn.offsetWidth / 2);
-                container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+            if (el) {
+              const rect = el.getBoundingClientRect();
+              if (rect.top <= headerOffset) {
+                currentCatId = cat.id;
               }
-              break;
             }
           }
-      }, 50); 
+
+          if (currentCatId && currentCatId !== activeCategory) {
+            setActiveCategory(currentCatId);
+            const btn = document.getElementById(`btn-${currentCatId}`);
+            if (btn && btn.parentNode) {
+              const container = btn.parentNode;
+              const scrollLeft = btn.offsetLeft - (container.offsetWidth / 2) + (btn.offsetWidth / 2);
+              container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScrollSpy);
-    return () => {
-      window.removeEventListener('scroll', handleScrollSpy);
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [currentView, activeMenuCategories]);
+    window.addEventListener('scroll', handleScrollSpy, { passive: true });
+    handleScrollSpy();
+    return () => window.removeEventListener('scroll', handleScrollSpy);
+  }, [currentView, activeMenuCategories, activeCategory]);
 
   useEffect(() => {
-    document.title = "Salaaş Cafe Restaurant";
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    document.title = "Salaaş Cafe Restaurant | Rezervasyon & Menü";
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // --- URL HASH VE SAFARI STANDALONE YÖNLENDİRME DİNLEYİCİSİ ---
+  useEffect(() => {
+    const handleHash = () => {
+      try {
+        const hash = window.location.hash.replace('#', '');
+        if (hash === 'admin') {
+          const authed = localStorage.getItem('salaas_admin_auth') === 'true';
+          if (authed) {
+            setIsAuthenticated(true);
+            setCurrentView('admin');
+          } else {
+            setShowLoginModal(true);
+          }
+        } else if (hash === 'menu') {
+          setCurrentView('menu');
+        } else if (hash === 'personnel') {
+          setCurrentView('personnel');
+        } else if (!hash) {
+          if (localStorage.getItem('salaas_admin_auth') !== 'true') {
+            setCurrentView('landing');
+          }
+        }
+      } catch (e) {}
+    };
+
+    window.addEventListener('hashchange', handleHash);
+
+    // İlk sayfa yüklenişinde kontrol
+    const hash = (typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '');
+    const authed = (typeof window !== 'undefined' ? localStorage.getItem('salaas_admin_auth') === 'true' : false);
+    
+    if (hash === 'admin') {
+      if (authed) {
+        setIsAuthenticated(true);
+        setCurrentView('admin');
+      } else {
+        setShowLoginModal(true);
+      }
+    } else if (authed && typeof window !== 'undefined' && window.navigator?.standalone) {
+      // iPhone Safari "Telefona Ekle" ile açıldığında otomatik Yönetim Panelinde kalır
+      setIsAuthenticated(true);
+      setCurrentView('admin');
+      window.location.hash = 'admin';
+    }
+
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
+  // --- YENİ REZERVASYON TALEBİ GELDİĞİNDE YALNIZCA YÖNETİCİYE BİLDİRİM GÖSTER (MÜŞTERİLER ASLA GÖRMEZ) ---
+  useEffect(() => {
+    if (isAuthenticated && currentView === 'admin') {
+      if (pendingRequests.length > previousPendingCount && previousPendingCount > 0) {
+        showToast(`🔔 Yeni Rezervasyon Talebi Düştü! (${pendingRequests.length} bekleyen)`, 'success');
+        try {
+          if ('vibrate' in navigator) navigator.vibrate([150, 80, 150]);
+        } catch (e) {}
+      }
+    }
+    setPreviousPendingCount(pendingRequests.length);
+  }, [pendingRequests.length, previousPendingCount, isAuthenticated, currentView]);
 
   useEffect(() => {
     const handleAfterPrint = () => setPrintSingleId(null);
@@ -302,9 +403,8 @@ export default function App() {
     
     const reqUnsub = onSnapshot(collection(db, 'reservationRequests'), (snapshot) => {
       const allReqs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setPendingRequests(
-        allReqs.filter(r => r.status === 'pending').sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt))
-      );
+      const pendingList = allReqs.filter(r => r.status === 'pending').sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
+      setPendingRequests(pendingList);
     });
     
     const menuUnsub = onSnapshot(collection(db, 'menuItems'), (snapshot) => {
@@ -329,25 +429,45 @@ export default function App() {
     };
   }, [user]);
 
-  // --- YARDIMCI FONKSİYONLAR ---
+  // --- YARDIMCI VE YÖNLENDİRME FONKSİYONLARI ---
   const handleNavToMenu = () => {
     setCurrentView('menu');
-    window.scrollTo(0, 0);
+    try { window.location.hash = 'menu'; } catch(e) {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleNavToHome = () => {
     setCurrentView('landing');
-    window.scrollTo(0, 0);
+    try {
+      if (window.location.hash) {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    } catch(e) {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleNavToPersonnel = () => {
     setCurrentView('personnel');
-    window.scrollTo(0, 0);
+    try { window.location.hash = 'personnel'; } catch(e) {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNavToAdmin = () => {
+    if (isAuthenticated) {
+      setCurrentView('admin');
+      try { window.location.hash = 'admin'; } catch(e) {}
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      setShowLoginModal(true);
+    }
   };
 
   const handleScrollToId = (id) => {
     if (currentView !== 'landing') {
       setCurrentView('landing');
+      try {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      } catch(e) {}
     }
     setTimeout(() => {
       const el = document.getElementById(id);
@@ -369,16 +489,39 @@ export default function App() {
     }
   };
 
+  // --- KALICI GİRİŞ (IPHONE SAFARI İÇİN LOCALSTORAGE VE HASH) ---
   const handleLogin = (e) => {
     e.preventDefault();
     if (loginUser === 'salaas' && loginPass === 'Salaas.2026') {
+      try {
+        if (rememberMe) {
+          localStorage.setItem('salaas_admin_auth', 'true');
+        }
+      } catch(err) {}
       setIsAuthenticated(true); 
       setShowLoginModal(false); 
       setLoginError('');
       setCurrentView('admin'); 
+      try { window.location.hash = 'admin'; } catch(err) {}
+      setActiveAdminTab('talepler'); // Hemen rezervasyon talepleri sekmesi açılır
+      showToast('Yönetim Paneline Hoş Geldiniz! Oturum kalıcı olarak kaydedildi.', 'success');
     } else { 
       setLoginError('Kullanıcı adı veya şifre hatalı!'); 
     }
+  };
+
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem('salaas_admin_auth');
+    } catch(err) {}
+    setIsAuthenticated(false);
+    setLoginUser('');
+    setLoginPass('');
+    setCurrentView('landing');
+    try {
+      history.replaceState(null, '', window.location.pathname);
+    } catch(err) {}
+    showToast('Yönetim oturumu kapatıldı', 'info');
   };
 
   const handleRequestChange = (e) => {
@@ -1066,39 +1209,48 @@ export default function App() {
               <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('iletisim'), 100); }} className="hover:text-[#c2784f] transition-all hover:-translate-y-0.5 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#c2784f] after:transition-all">İletişim</button>
             </div>
             
-            {/* Butonlar: Rezervasyon, Menü, Hamburger (Mobilde tam sığacak ve taşmayacak şekilde) */}
-            <div className="shrink-0 flex items-center justify-end gap-1.5 sm:gap-3">
+            {/* Masaüstü Butonlar + Mobilde Lüks Hızlı İkonlar */}
+            <div className="shrink-0 flex items-center justify-end gap-2 sm:gap-3">
+              {/* Masaüstü Rezervasyon & Menü Butonları */}
               <button 
                 onClick={() => setShowRequestModal(true)} 
-                className="btn-outline-premium active-press px-2.5 py-1.5 sm:px-5 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-black tracking-wider uppercase shadow-md flex items-center gap-1.5 shrink-0 hover:border-[#c2784f] transition-all"
+                className="hidden sm:flex btn-outline-premium active-press px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-black tracking-wider uppercase shadow-md items-center gap-2 shrink-0 hover:border-[#c2784f] transition-all"
               >
-                <CalendarDays size={14} className="shrink-0" /> <span className="hidden sm:inline">Rezervasyon</span><span className="sm:hidden">Rezv.</span>
+                <CalendarDays size={15} className="shrink-0" /> <span>Rezervasyon</span>
               </button>
               <button 
                 onClick={handleNavToMenu} 
-                className="btn-premium shine-effect active-press px-2.5 py-1.5 sm:px-6 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-black tracking-wider uppercase shadow-xl flex items-center gap-1.5 shrink-0"
+                className="hidden sm:flex btn-premium shine-effect active-press px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs font-black tracking-wider uppercase shadow-xl items-center gap-2 shrink-0"
               >
-                <MenuSquare size={14} className="shrink-0" /> <span>Menü</span>
+                <MenuSquare size={15} className="shrink-0" /> <span>Dijital Menü</span>
               </button>
+
+              {/* Mobilde Hızlı Arama & Instagram Butonları */}
+              <a 
+                href={`tel:+${WHATSAPP_NO}`}
+                className="sm:hidden w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-[#c2784f] active-press"
+                aria-label="Telefonla Ara"
+              >
+                <Phone size={16} />
+              </a>
+              <a 
+                href="https://www.instagram.com/salascaferestaurant/"
+                target="_blank" 
+                rel="noreferrer"
+                className="sm:hidden w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-[#e09f7a] active-press"
+                aria-label="Instagram"
+              >
+                <Instagram size={16} />
+              </a>
+
+              {/* Hamburger Butonu */}
               <button 
                 onClick={() => setIsMobileMenuOpen(true)}
-                className={`lg:hidden w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl transition-colors active-press shrink-0 ${isScrolled || isDark ? 'text-slate-200 hover:text-white bg-white/10 border border-white/10' : 'text-white hover:text-[#c2784f] bg-black/40 backdrop-blur-md border border-white/15'}`}
+                className={`lg:hidden w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl transition-colors active-press shrink-0 ${isScrolled || isDark ? 'text-slate-200 hover:text-white bg-white/10 border border-white/10' : 'text-white hover:text-[#c2784f] bg-black/40 backdrop-blur-md border border-white/15'}`}
                 aria-label="Menüyü Aç"
               >
-                <Menu size={18} className="sm:hidden" />
-                <Menu size={22} className="hidden sm:block" />
+                <Menu size={20} />
               </button>
-            </div>
-          </div>
-            
-          {/* MOBİL HIZLI KÖPRÜLER - Modern Glass Kapsül */}
-          <div className="lg:hidden w-full flex items-center justify-center mt-2 px-3">
-            <div className="flex items-center justify-center gap-4 sm:gap-6 px-4 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[10px] font-black tracking-widest uppercase text-slate-300 shadow-md">
-              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('hakkimizda'), 100); }} className="whitespace-nowrap hover:text-[#c2784f] active:text-[#c2784f] transition-colors active-press">Biz Kimiz</button>
-              <span className="w-1 h-1 rounded-full bg-white/20"></span>
-              <button onClick={() => { if (currentView !== 'landing') handleNavToHome(); setTimeout(() => handleScrollToId('lezzetler'), 100); }} className="whitespace-nowrap hover:text-[#c2784f] active:text-[#c2784f] transition-colors active-press">Lezzetler</button>
-              <span className="w-1 h-1 rounded-full bg-white/20"></span>
-              <button onClick={handleNavToPersonnel} className={`whitespace-nowrap hover:text-[#c2784f] active:text-[#c2784f] transition-colors active-press ${currentView === 'personnel' ? 'text-[#c2784f]' : ''}`}>Ekibimiz</button>
             </div>
           </div>
           
@@ -1156,7 +1308,7 @@ export default function App() {
       <div className="w-full max-w-[1920px] mx-auto px-6 sm:px-12 lg:px-24 grid grid-cols-1 md:grid-cols-3 gap-16 lg:gap-24 relative z-10">
         
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
-          <img src="/salaaslogobg.png" alt="Salaaş Logo" className="h-28 lg:h-36 object-contain mb-8 filter brightness-150 drop-shadow-[0_0_15px_rgba(194,120,79,0.3)]" />
+          <img src="/salaaslogobg.png" alt="Salaaş Logo" className="h-28 lg:h-36 object-contain mb-8 select-none drop-shadow-[0_0_15px_rgba(194,120,79,0.3)]" />
           <p className="text-base lg:text-lg leading-relaxed mb-6 max-w-sm font-light text-slate-400">
             Şehrin kalbinde, lüks ve samimiyetin kesişme noktası. Sizi ağırlamaktan mutluluk duyarız.
           </p>
@@ -1229,13 +1381,13 @@ export default function App() {
         </div>
       </div>
       
-      {/* ALT TELİF VE GELİŞTİRİCİ İMZASI (Telif Solda, CCN Teknoloji Sağda ve Turuncu Tonlarda) */}
-      <div className="w-full max-w-[1920px] mx-auto px-6 sm:px-12 lg:px-24 mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-        <p className="text-xs sm:text-sm font-medium text-slate-400 opacity-80 order-2 md:order-1">
+      {/* ALT TELİF VE GELİŞTİRİCİ İMZASI (Tasarım & Geliştirme Telifin Doğrudan Altında) */}
+      <div className="w-full max-w-[1920px] mx-auto px-6 sm:px-12 lg:px-24 mt-20 pt-8 border-t border-white/5 flex flex-col items-center justify-center gap-3 text-center">
+        <p className="text-xs sm:text-sm font-medium text-slate-400 opacity-80">
           © {new Date().getFullYear()} Salaaş Cafe Restaurant. Tüm hakları saklıdır.
         </p>
         
-        <div className="flex items-center gap-2 text-xs text-slate-300 order-1 md:order-2">
+        <div className="flex items-center justify-center gap-2 text-xs text-slate-300">
           <span className="font-light tracking-wide text-slate-400">Tasarım & Geliştirme:</span>
           <a
             href="https://affanccn.com/"
@@ -1258,97 +1410,274 @@ export default function App() {
     </footer>
   );
 
+  // --- MOBİL UYGULAMA TİPİ YÜZEN TAB ÇUBUĞU (100% MOBİL DENEYİM) ---
+  const renderMobileBottomDock = () => {
+    if (currentView === 'admin') return null;
+
+    return (
+      <aside aria-label="Mobil Gezinme Menüsü" className="md:hidden fixed bottom-3 left-3 right-3 z-40 max-w-md mx-auto pointer-events-auto">
+        <nav className="mobile-nav-dock rounded-full px-2 py-1.5 flex items-center justify-around text-slate-300 shadow-2xl relative">
+          
+          {/* 1. Ana Sayfa */}
+          <button 
+            type="button"
+            onClick={handleNavToHome}
+            className={`flex flex-col items-center justify-center p-1.5 min-w-[50px] rounded-2xl active-press transition-colors ${
+              currentView === 'landing' ? 'text-[#e09f7a] font-black' : 'text-slate-400 hover:text-white'
+            }`}
+            aria-label="Ana Sayfa"
+          >
+            <Home size={19} className={currentView === 'landing' ? 'stroke-[2.5]' : 'stroke-2'} />
+            <span className="text-[10px] tracking-tight mt-0.5">Ana Sayfa</span>
+          </button>
+
+          {/* 2. Menü */}
+          <button 
+            type="button"
+            onClick={handleNavToMenu}
+            className={`flex flex-col items-center justify-center p-1.5 min-w-[50px] rounded-2xl active-press transition-colors ${
+              currentView === 'menu' ? 'text-[#e09f7a] font-black' : 'text-slate-400 hover:text-white'
+            }`}
+            aria-label="Menü"
+          >
+            <UtensilsCrossed size={19} className={currentView === 'menu' ? 'stroke-[2.5]' : 'stroke-2'} />
+            <span className="text-[10px] tracking-tight mt-0.5">Menü</span>
+          </button>
+
+          {/* 3. REZERVASYON (Merkezi Parlayan Hero Buton) */}
+          <button 
+            type="button"
+            onClick={() => setShowRequestModal(true)}
+            className="flex flex-col items-center justify-center -mt-6 active-press group"
+            aria-label="Rezervasyon Talebi Gönder"
+          >
+            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-[#934b26] via-[#c2784f] to-[#e09f7a] text-white flex items-center justify-center shadow-[0_8px_25px_rgba(194,120,79,0.55)] border-[3.5px] border-[#0a0908] animate-gold-pulse group-hover:scale-105 transition-transform p-3">
+              <CalendarDays size={22} className="stroke-[2.5]" />
+            </div>
+            <span className="text-[9px] font-black tracking-wider text-[#e09f7a] mt-0.5 uppercase">Rezv.</span>
+          </button>
+
+          {/* 4. Ekibimiz */}
+          <button 
+            type="button"
+            onClick={handleNavToPersonnel}
+            className={`flex flex-col items-center justify-center p-1.5 min-w-[50px] rounded-2xl active-press transition-colors ${
+              currentView === 'personnel' ? 'text-[#e09f7a] font-black' : 'text-slate-400 hover:text-white'
+            }`}
+            aria-label="Ekibimiz"
+          >
+            <Users size={19} className={currentView === 'personnel' ? 'stroke-[2.5]' : 'stroke-2'} />
+            <span className="text-[10px] tracking-tight mt-0.5">Ekibimiz</span>
+          </button>
+
+          {/* 5. WhatsApp */}
+          <a 
+            href={`https://wa.me/${WHATSAPP_NO}?text=${encodeURIComponent('Merhaba Salaaş Cafe Restaurant,')}`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex flex-col items-center justify-center p-1.5 min-w-[50px] rounded-2xl active-press text-[#25D366] hover:text-[#20b858] transition-colors"
+            aria-label="WhatsApp Canlı Destek"
+          >
+            <MessageCircle size={19} className="stroke-[2.5]" />
+            <span className="text-[10px] tracking-tight mt-0.5 font-bold">WhatsApp</span>
+          </a>
+
+        </nav>
+      </aside>
+    );
+  };
+
   const renderModals = () => (
     <>
       {showRequestModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-[#0a0908] rounded-3xl shadow-[0_0_50px_rgba(194,120,79,0.15)] border border-white/10 w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in slide-in-from-bottom-4 duration-300">
-            <div className="glass-panel p-6 sm:p-8 flex items-center justify-between text-white shrink-0 z-10 border-b border-white/10 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#c2784f]/20 to-transparent opacity-50"></div>
-              <h3 className="font-black tracking-widest uppercase flex items-center gap-3 text-lg lg:text-xl relative z-10"><CalendarDays size={24} className="text-[#c2784f]"/> Rezervasyon Talebi</h3>
-              <button type="button" onClick={() => setShowRequestModal(false)} className="p-3 hover:bg-white/10 rounded-2xl transition-colors relative z-10"><X size={24}/></button>
+        <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-[#0e0d0b] rounded-t-[2.5rem] sm:rounded-3xl shadow-[0_0_60px_rgba(194,120,79,0.25)] border border-[#c2784f]/25 w-full max-w-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[88vh] animate-sheet-up sm:animate-in sm:slide-in-from-bottom-4 duration-300 pb-safe">
+            
+            {/* Mobil Çekme Çubuğu */}
+            <div className="sm:hidden w-full flex justify-center pt-2.5 pb-1">
+              <div className="w-12 h-1.5 rounded-full bg-white/20"></div>
+            </div>
+
+            <div className="p-5 sm:p-7 flex items-center justify-between text-white shrink-0 z-10 border-b border-white/10 relative overflow-hidden bg-[#14110e]">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#c2784f]/20 via-transparent to-transparent opacity-60"></div>
+              <div className="relative z-10">
+                <h3 className="font-serif font-light text-xl sm:text-2xl flex items-center gap-2.5">
+                  <CalendarDays size={22} className="text-[#c2784f]"/> Rezervasyon <span className="text-gradient-copper font-black italic">Talebi</span>
+                </h3>
+                <p className="text-[11px] text-slate-400 font-light mt-0.5">Tarih, kişi ve talebinizi belirleyin; size hemen dönüş yapalım.</p>
+              </div>
+              <button type="button" onClick={() => setShowRequestModal(false)} className="p-2.5 hover:bg-white/10 rounded-2xl transition-colors relative z-10 active-press text-slate-400 hover:text-white"><X size={22}/></button>
             </div>
             
             <div className="overflow-y-auto bg-transparent flex-1 relative custom-scrollbar">
               {requestSuccess ? (
-                 <div className="p-16 flex flex-col items-center justify-center text-center space-y-6 h-full min-h-[400px]">
-                    <div className="w-24 h-24 bg-[#c2784f]/20 text-[#c2784f] border border-[#c2784f]/30 rounded-full flex items-center justify-center mb-4"><CheckCircle2 size={48} /></div>
-                    <h3 className="text-3xl font-black text-white tracking-wide">Talebiniz Alındı!</h3>
-                    <p className="text-lg text-slate-400 font-light leading-relaxed">Rezervasyon talebiniz işletmemize başarıyla iletilmiştir. En kısa sürede sizinle iletişime geçip onay verilecektir.</p>
+                 <div className="p-8 sm:p-14 flex flex-col items-center justify-center text-center space-y-6 h-full min-h-[380px] animate-in fade-in zoom-in-95 duration-400">
+                    <div className="relative">
+                      <div className="w-24 h-24 bg-[#c2784f]/20 text-[#c2784f] border border-[#c2784f]/40 rounded-full flex items-center justify-center animate-spark-pop shadow-[0_0_40px_rgba(194,120,79,0.3)]">
+                        <CheckCircle2 size={50} />
+                      </div>
+                      <Sparkles size={28} className="absolute -top-2 -right-2 text-[#d4af37] animate-bounce" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-2xl sm:text-3xl font-serif font-light text-white">Talebiniz <span className="text-gradient-copper italic font-black">Başarıyla Alındı!</span></h3>
+                      <p className="text-sm sm:text-base text-slate-300 font-light leading-relaxed max-w-md mx-auto">
+                        Rezervasyon talebiniz yönetim panelimize iletilmiştir. Ekibimiz müsaitliği kontrol ederek kısa süre içinde sizinle iletişime geçecektir.
+                      </p>
+                    </div>
+
+                    <div className="w-full max-w-sm flex flex-col gap-3 pt-2">
+                      <a 
+                        href={`https://wa.me/${WHATSAPP_NO}?text=${encodeURIComponent(`Merhaba Salaaş Cafe, web sitenizden ${requestData.name} adına ${requestData.peopleCount} kişilik rezervasyon talebi oluşturdum.`)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn-premium active-press py-3.5 px-6 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl"
+                      >
+                        <MessageCircle size={18} /> WhatsApp ile de Bilgi Al
+                      </a>
+                      <button 
+                        type="button" 
+                        onClick={() => { setShowRequestModal(false); setRequestSuccess(false); }}
+                        className="py-3 px-6 rounded-2xl text-xs font-bold text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
+                      >
+                        Pencereyi Kapat
+                      </button>
+                    </div>
                  </div>
               ) : (
-                <form onSubmit={(e) => submitRequest(e, false)} className="p-8 sm:p-10 space-y-6">
+                <form onSubmit={(e) => submitRequest(e, false)} className="p-6 sm:p-8 space-y-6">
                   {requestError && (
-                    <div className="bg-red-500/10 text-red-400 p-4 rounded-2xl text-sm font-bold border border-red-500/20 flex items-center gap-3">
-                      <AlertTriangle size={20} className="shrink-0" /> {requestError}
+                    <div className="bg-red-500/10 text-red-400 p-4 rounded-2xl text-xs font-bold border border-red-500/20 flex items-center gap-2.5">
+                      <AlertTriangle size={18} className="shrink-0" /> {requestError}
                     </div>
                   )}
 
+                  {/* 1. Tür Seçimi */}
                   <div>
-                    <label className="block text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Rezervasyon Türü</label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        <button type="button" onClick={() => setRequestData({...requestData, type: 'kahvalti'})} className={`py-3.5 rounded-2xl font-bold text-sm border transition-all flex items-center justify-center gap-2 ${requestData.type === 'kahvalti' ? 'border-[#c2784f] bg-[#c2784f]/10 text-[#c2784f] shadow-[0_0_15px_rgba(194,120,79,0.2)]' : 'border-white/10 text-slate-400 hover:border-white/20 bg-white/5 hover:bg-white/10'}`}>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2.5">Rezervasyon Türü</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                        <button type="button" onClick={() => setRequestData({...requestData, type: 'kahvalti'})} className={`py-3 px-3 rounded-2xl font-bold text-xs sm:text-sm border transition-all flex items-center justify-center gap-2 active-press ${requestData.type === 'kahvalti' ? 'border-[#c2784f] bg-[#c2784f]/15 text-[#e09f7a] shadow-[0_0_15px_rgba(194,120,79,0.2)]' : 'border-white/10 text-slate-400 hover:border-white/20 bg-white/5 hover:bg-white/10'}`}>
                            <Coffee size={16}/> Kahvaltı
                         </button>
-                        <button type="button" onClick={() => setRequestData({...requestData, type: 'yemek'})} className={`py-3.5 rounded-2xl font-bold text-sm border transition-all flex items-center justify-center gap-2 ${requestData.type === 'yemek' ? 'border-[#c2784f] bg-[#c2784f]/10 text-[#c2784f] shadow-[0_0_15px_rgba(194,120,79,0.2)]' : 'border-white/10 text-slate-400 hover:border-white/20 bg-white/5 hover:bg-white/10'}`}>
+                        <button type="button" onClick={() => setRequestData({...requestData, type: 'yemek'})} className={`py-3 px-3 rounded-2xl font-bold text-xs sm:text-sm border transition-all flex items-center justify-center gap-2 active-press ${requestData.type === 'yemek' ? 'border-[#c2784f] bg-[#c2784f]/15 text-[#e09f7a] shadow-[0_0_15px_rgba(194,120,79,0.2)]' : 'border-white/10 text-slate-400 hover:border-white/20 bg-white/5 hover:bg-white/10'}`}>
                            <UtensilsCrossed size={16}/> Yemek
                         </button>
-                        <button type="button" onClick={() => setRequestData({...requestData, type: 'mac'})} className={`py-3.5 rounded-2xl font-bold text-sm border transition-all flex items-center justify-center gap-2 ${requestData.type === 'mac' ? 'border-[#c2784f] bg-[#c2784f]/10 text-[#c2784f] shadow-[0_0_15px_rgba(194,120,79,0.2)]' : 'border-white/10 text-slate-400 hover:border-white/20 bg-white/5 hover:bg-white/10'}`}>
-                           <MonitorPlay size={16}/> Maç
+                        <button type="button" onClick={() => setRequestData({...requestData, type: 'mac'})} className={`py-3 px-3 rounded-2xl font-bold text-xs sm:text-sm border transition-all flex items-center justify-center gap-2 active-press ${requestData.type === 'mac' ? 'border-[#c2784f] bg-[#c2784f]/15 text-[#e09f7a] shadow-[0_0_15px_rgba(194,120,79,0.2)]' : 'border-white/10 text-slate-400 hover:border-white/20 bg-white/5 hover:bg-white/10'}`}>
+                           <MonitorPlay size={16}/> Maç Yayını
                         </button>
-                        <button type="button" onClick={() => setRequestData({...requestData, type: 'dogum_gunu'})} className={`py-3.5 rounded-2xl font-bold text-sm border transition-all flex items-center justify-center gap-2 ${requestData.type === 'dogum_gunu' ? 'border-[#c2784f] bg-[#c2784f]/10 text-[#c2784f] shadow-[0_0_15px_rgba(194,120,79,0.2)]' : 'border-white/10 text-slate-400 hover:border-white/20 bg-white/5 hover:bg-white/10'}`}>
+                        <button type="button" onClick={() => setRequestData({...requestData, type: 'dogum_gunu'})} className={`py-3 px-3 rounded-2xl font-bold text-xs sm:text-sm border transition-all flex items-center justify-center gap-2 active-press ${requestData.type === 'dogum_gunu' ? 'border-[#c2784f] bg-[#c2784f]/15 text-[#e09f7a] shadow-[0_0_15px_rgba(194,120,79,0.2)]' : 'border-white/10 text-slate-400 hover:border-white/20 bg-white/5 hover:bg-white/10'}`}>
                            <Star size={16}/> Doğum Günü
                         </button>
-                        <button type="button" onClick={() => setRequestData({...requestData, type: 'organizasyon'})} className={`py-3.5 rounded-2xl font-bold text-sm border transition-all flex items-center justify-center gap-2 md:col-span-2 ${requestData.type === 'organizasyon' ? 'border-[#c2784f] bg-[#c2784f]/10 text-[#c2784f] shadow-[0_0_15px_rgba(194,120,79,0.2)]' : 'border-white/10 text-slate-400 hover:border-white/20 bg-white/5 hover:bg-white/10'}`}>
-                           <Users size={16}/> Organizasyon
+                        <button type="button" onClick={() => setRequestData({...requestData, type: 'organizasyon'})} className={`py-3 px-3 rounded-2xl font-bold text-xs sm:text-sm border transition-all flex items-center justify-center gap-2 col-span-2 sm:col-span-2 active-press ${requestData.type === 'organizasyon' ? 'border-[#c2784f] bg-[#c2784f]/15 text-[#e09f7a] shadow-[0_0_15px_rgba(194,120,79,0.2)]' : 'border-white/10 text-slate-400 hover:border-white/20 bg-white/5 hover:bg-white/10'}`}>
+                           <Users size={16}/> Özel Davet & Organizasyon
                         </button>
                     </div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-5">
-                    <div className="flex-[2]">
-                      <label className="block text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Ad Soyad</label>
-                      <input type="text" name="name" value={requestData.name} onChange={handleRequestChange} className="w-full bg-white/5 text-white px-5 py-4 rounded-2xl border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none font-medium transition-all text-base placeholder-slate-600" required placeholder="Adınız Soyadınız" />
-                    </div>
-                    <div className="flex-[1]">
-                       <label className="block text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Kişi Sayısı</label>
-                       <input type="number" name="peopleCount" min="1" value={requestData.peopleCount} onChange={handleRequestChange} onClick={e => e.target.select()} className="w-full bg-white/5 text-white px-5 py-4 rounded-2xl border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none font-medium transition-all text-center text-base" required />
-                     </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-5">
-                     <div className="flex-1">
-                        <label className="block text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Telefon</label>
-                        <input type="tel" name="phone" value={requestData.phone} onChange={handleRequestChange} className="w-full bg-white/5 text-white px-5 py-4 rounded-2xl border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none font-medium transition-all text-base placeholder-slate-600" required placeholder="05XX..." />
-                     </div>
-                     <div className="flex-1">
-                        <label className="block text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Tarih</label>
-                        <input type="date" name="date" value={requestData.date} onChange={handleRequestChange} className="w-full bg-white/5 text-white px-5 py-4 rounded-2xl border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none font-medium transition-all text-base color-scheme-dark" required />
-                     </div>
-                  </div>
-
+                  {/* 2. Kişi Sayısı Hızlı Butonları (Mobilde 1 Dokunuşla Seçim) */}
                   <div>
-                    <label className="block text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">
-                      {(requestData.type === 'dogum_gunu' || requestData.type === 'organizasyon') ? 'Detaylı Açıklama (Zorunlu)' : 'Notunuz (İsteğe Bağlı)'}
-                    </label>
-                    <textarea name="notes" value={requestData.notes} onChange={handleRequestChange} rows="3" required={(requestData.type === 'dogum_gunu' || requestData.type === 'organizasyon')} className="w-full bg-white/5 text-white px-5 py-4 rounded-2xl border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none font-medium transition-all resize-none text-sm placeholder-slate-600" placeholder="Özel isteklerinizi yazın."></textarea>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2.5">Kişi Sayısı</label>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {[1, 2, 3, 4, 5, 6, 8, 10, 15].map((num) => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => setRequestData({...requestData, peopleCount: num})}
+                          className={`w-10 h-10 rounded-xl font-bold text-xs border transition-all active-press flex items-center justify-center ${
+                            parseInt(requestData.peopleCount, 10) === num 
+                              ? 'bg-[#c2784f] text-white border-[#c2784f] shadow-lg shadow-[#c2784f]/30' 
+                              : 'bg-white/5 text-slate-300 border-white/10 hover:border-white/20'
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                      <div className="flex-1 min-w-[70px]">
+                        <input 
+                          type="number" 
+                          min="1" 
+                          value={requestData.peopleCount} 
+                          onChange={handleRequestChange} 
+                          name="peopleCount" 
+                          placeholder="Diğer"
+                          className="w-full h-10 rounded-xl bg-white/5 border border-white/10 text-white text-center font-bold text-xs outline-none focus:border-[#c2784f]"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  {/* İKİ ADET BUTON: SADECE GÖNDER & HEM GÖNDER HEM WHATSAPP'A İLET */}
-                  <div className="flex flex-col sm:flex-row gap-3 pt-3">
+                  {/* 3. İsim ve Telefon */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Ad Soyad *</label>
+                      <input 
+                        type="text" 
+                        name="name" 
+                        value={requestData.name} 
+                        onChange={handleRequestChange} 
+                        className="w-full bg-white/5 text-white px-4 py-3.5 rounded-2xl border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none font-medium transition-all text-sm placeholder-slate-600" 
+                        required 
+                        placeholder="Örn: Ahmet Yılmaz" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Telefon Numarası *</label>
+                      <input 
+                        type="tel" 
+                        name="phone" 
+                        value={requestData.phone} 
+                        onChange={handleRequestChange} 
+                        className="w-full bg-white/5 text-white px-4 py-3.5 rounded-2xl border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none font-medium transition-all text-sm placeholder-slate-600" 
+                        required 
+                        placeholder="05XX XXX XX XX" 
+                      />
+                    </div>
+                  </div>
+
+                  {/* 4. Tarih */}
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Rezervasyon Tarihi *</label>
+                    <input 
+                      type="date" 
+                      name="date" 
+                      min={getToday()} 
+                      value={requestData.date} 
+                      onChange={handleRequestChange} 
+                      className="w-full bg-white/5 text-white px-4 py-3.5 rounded-2xl border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none font-medium transition-all text-sm cursor-pointer" 
+                      required 
+                    />
+                  </div>
+
+                  {/* 5. Notlar */}
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
+                      {(requestData.type === 'dogum_gunu' || requestData.type === 'organizasyon') ? 'Detaylı Açıklama (Zorunlu)' : 'Özel İstek / Masa Tercihi (İsteğe Bağlı)'}
+                    </label>
+                    <textarea 
+                      name="notes" 
+                      value={requestData.notes} 
+                      onChange={handleRequestChange} 
+                      rows="2" 
+                      required={(requestData.type === 'dogum_gunu' || requestData.type === 'organizasyon')} 
+                      className="w-full bg-white/5 text-white px-4 py-3 rounded-2xl border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none font-medium transition-all resize-none text-xs sm:text-sm placeholder-slate-600" 
+                      placeholder="Bahçe masası, pasta servisi veya çocuk sandalyesi gibi notlarınız..."
+                    ></textarea>
+                  </div>
+
+                  {/* Butonlar */}
+                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
                     <button 
                       type="submit" 
-                      className="flex-1 bg-white/10 hover:bg-white/20 border border-white/15 text-white font-black tracking-[0.15em] uppercase py-4 rounded-2xl transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
+                      className="flex-1 btn-premium py-4 rounded-2xl text-xs sm:text-sm font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl active-press"
                     >
-                      Talebi Gönder <ArrowRight size={18} />
+                      Talebi Gönder <ArrowRight size={17} />
                     </button>
                     
                     <button 
                       type="button" 
                       onClick={(e) => submitRequest(e, true)}
-                      className="flex-1 bg-[#25D366] hover:bg-[#20b858] text-white font-black tracking-[0.15em] uppercase py-4 rounded-2xl transition-all shadow-[0_0_25px_rgba(37,211,102,0.35)] hover:shadow-[0_0_30px_rgba(37,211,102,0.5)] flex items-center justify-center gap-2 text-xs sm:text-sm hover:-translate-y-0.5"
+                      className="flex-1 bg-[#25D366] hover:bg-[#20b858] text-white py-4 rounded-2xl text-xs sm:text-sm font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(37,211,102,0.35)] active-press"
                     >
-                      <MessageCircle size={20} /> Talebi Gönder & WhatsApp
+                      <MessageCircle size={18} /> WhatsApp ile de İlet
                     </button>
                   </div>
                 </form>
@@ -1358,34 +1687,79 @@ export default function App() {
         </div>
       )}
 
+      {/* LÜKS YÖNETİM PANELİ GİRİŞİ MODALI */}
       {showLoginModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-md overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
-            <div className="bg-[#0B3B2C] p-6 sm:p-8 flex items-center justify-between text-white">
-              <h3 className="font-black tracking-wide flex items-center gap-2 sm:gap-3 text-lg sm:text-xl"><Lock size={20} className="text-orange-400"/> Sistem Girişi</h3>
-              <button type="button" onClick={() => {setShowLoginModal(false); setLoginError('');}} className="p-3 hover:bg-white/20 rounded-xl transition-colors"><X size={24}/></button>
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-[#12100e] border border-[#c2784f]/35 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.85)] w-full max-w-sm sm:max-w-md overflow-hidden animate-in slide-in-from-bottom-4 duration-300 text-white">
+            <div className="p-6 sm:p-7 flex items-center justify-between border-b border-white/10 bg-[#191512]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#c2784f]/15 border border-[#c2784f]/30 flex items-center justify-center text-[#e09f7a]">
+                  <Lock size={18} />
+                </div>
+                <div>
+                  <h3 className="font-serif font-light text-lg sm:text-xl text-white">Yönetim <span className="text-gradient-copper italic font-black">Paneli</span></h3>
+                  <p className="text-[10px] text-slate-400 uppercase tracking-widest">Yetkili Girişi</p>
+                </div>
+              </div>
+              <button type="button" onClick={() => { setShowLoginModal(false); setLoginError(''); }} className="p-2.5 hover:bg-white/10 rounded-xl transition-colors text-slate-400 hover:text-white active-press"><X size={20}/></button>
             </div>
             
-            <form onSubmit={handleLogin} className="p-6 sm:p-8 space-y-4 sm:space-y-6 bg-white">
+            <form onSubmit={handleLogin} className="p-6 sm:p-7 space-y-4">
               {loginError && (
-                <div className="bg-red-50 text-red-600 text-sm font-bold p-3 sm:p-4 rounded-xl border border-red-100 flex items-center gap-2">
-                  <X size={16}/> {loginError}
+                <div className="bg-red-500/10 text-red-400 text-xs font-bold p-3 rounded-xl border border-red-500/20 flex items-center gap-2">
+                  <AlertTriangle size={15}/> {loginError}
                 </div>
               )}
               
               <div>
-                <label className="block text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Kullanıcı Adı</label>
-                <input type="text" value={loginUser} onChange={(e) => setLoginUser(e.target.value)} autoComplete="username" className="w-full px-4 py-3 sm:px-5 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:ring-4 focus:ring-[#0B3B2C]/10 focus:border-[#0B3B2C] outline-none bg-slate-50 font-bold text-slate-800 transition-all text-base sm:text-lg" placeholder="Kullanıcı adınızı girin" autoFocus />
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Kullanıcı Adı</label>
+                <input 
+                  type="text" 
+                  value={loginUser} 
+                  onChange={(e) => setLoginUser(e.target.value)} 
+                  autoComplete="username" 
+                  className="w-full px-4 py-3.5 rounded-xl border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 font-bold text-white transition-all text-sm" 
+                  placeholder="Kullanıcı adı" 
+                  autoFocus 
+                />
               </div>
               
               <div>
-                <label className="block text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Şifre</label>
-                <input type="password" value={loginPass} onChange={(e) => setLoginPass(e.target.value)} autoComplete="current-password" className="w-full px-4 py-3 sm:px-5 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:ring-4 focus:ring-[#0B3B2C]/10 focus:border-[#0B3B2C] outline-none bg-slate-50 font-bold text-slate-800 transition-all text-base sm:text-lg" placeholder="••••••••" />
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Şifre</label>
+                <input 
+                  type="password" 
+                  value={loginPass} 
+                  onChange={(e) => setLoginPass(e.target.value)} 
+                  autoComplete="current-password" 
+                  className="w-full px-4 py-3.5 rounded-xl border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 font-bold text-white transition-all text-sm" 
+                  placeholder="••••••••" 
+                />
+              </div>
+
+              <div className="flex items-center justify-between text-xs pt-1">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input 
+                    type="checkbox" 
+                    checked={rememberMe} 
+                    onChange={(e) => setRememberMe(e.target.checked)} 
+                    className="rounded accent-[#c2784f] w-4 h-4 cursor-pointer" 
+                  />
+                  <span className="text-slate-300 text-xs font-medium">Beni Hatırla (iPhone'da Kalıcı)</span>
+                </label>
               </div>
               
-              <button type="submit" className="w-full bg-[#0B3B2C] hover:bg-emerald-900 text-white font-black tracking-widest uppercase py-4 sm:py-5 rounded-xl sm:rounded-2xl transition-all shadow-lg hover:shadow-xl mt-4 sm:mt-6 flex items-center justify-center gap-2 sm:gap-3 hover:-translate-y-0.5 text-base sm:text-lg">
-                Giriş Yap <ArrowRight size={20} />
+              <button 
+                type="submit" 
+                className="w-full btn-premium py-4 rounded-xl font-black tracking-widest uppercase text-xs flex items-center justify-center gap-2 shadow-lg active-press mt-2"
+              >
+                Giriş Yap <ArrowRight size={16} />
               </button>
+
+              <div className="pt-2 text-center">
+                <p className="text-[10px] text-slate-400 leading-relaxed">
+                  💡 <strong>İpucu:</strong> iPhone Safari'de Paylaş ➔ "Ana Ekrana Ekle" dendiğinde oturumunuz kalıcı olur.
+                </p>
+              </div>
             </form>
           </div>
         </div>
@@ -1718,20 +2092,17 @@ export default function App() {
            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[650px] lg:w-[800px] h-[350px] sm:h-[450px] bg-[#c2784f]/15 rounded-full blur-[140px] pointer-events-none"></div>
 
            <div className="relative z-10 text-center px-4 sm:px-6 w-full max-w-6xl mx-auto flex flex-col items-center justify-center h-full">
-              <span className="text-[10px] sm:text-xs font-black tracking-[0.4em] text-[#e09f7a] uppercase mb-4 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md animate-fade-in-up">
-                Gebze'nin Gözde Mekanı
-              </span>
               
-              <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white font-serif mb-4 sm:mb-6 drop-shadow-2xl animate-fade-in-up delay-100 leading-[1.12]">
+              <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white font-serif mb-4 sm:mb-6 drop-shadow-2xl animate-fade-in-up leading-[1.12]">
                 Lezzet ve <span className="text-gradient-copper italic font-light">Muhabbetin</span> Adresi
               </h1>
               
-              <p className="text-sm sm:text-lg lg:text-xl text-slate-300 max-w-3xl mx-auto font-light tracking-wide mb-8 sm:mb-12 leading-relaxed drop-shadow-md animate-fade-in-up delay-200">
+              <p className="text-sm sm:text-lg lg:text-xl text-slate-300 max-w-3xl mx-auto font-light tracking-wide mb-8 sm:mb-12 leading-relaxed drop-shadow-md animate-fade-in-up delay-100">
                 Şehrin gürültüsünden uzak, samimi atmosferimizde unutulmaz tatlar ve anılar biriktirin.
               </p>
               
               {/* Eylem Butonları: Rezervasyon + Menü */}
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-3.5 sm:gap-5 animate-fade-in-scale delay-300 w-full max-w-md lg:max-w-xl mx-auto mb-10 sm:mb-14">
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-3.5 sm:gap-5 animate-fade-in-scale delay-200 w-full max-w-md lg:max-w-xl mx-auto mb-10 sm:mb-14">
                  <button 
                    onClick={() => setShowRequestModal(true)} 
                    className="w-full sm:w-auto btn-premium active-press px-8 py-4 sm:py-4.5 lg:px-10 rounded-full font-black uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-3 text-xs sm:text-sm glow-copper"
@@ -1748,7 +2119,7 @@ export default function App() {
               </div>
               
               {/* Kategori Rozetleri */}
-              <div className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-8 text-[10px] sm:text-xs font-black tracking-widest uppercase text-slate-200 animate-fade-in-up delay-400">
+              <div className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-8 text-[10px] sm:text-xs font-black tracking-widest uppercase text-slate-200 animate-fade-in-up delay-300">
                  <button onClick={handleNavToMenu} className="flex items-center gap-2 glass px-5 py-2.5 sm:px-6 sm:py-3 rounded-full shadow-lg hover:border-[#c2784f]/50 hover:bg-[#c2784f]/10 transition-all active-press">
                    <Coffee size={16} className="text-[#c2784f]"/> Kahvaltı
                  </button>
@@ -1759,13 +2130,17 @@ export default function App() {
                    <Wind size={16} className="text-[#c2784f]"/> Nargile & İçecek
                  </button>
               </div>
-           </div>
-           
-           {/* Keşfet Kaydırma İndikatörü */}
-           <div className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 text-white/50 animate-bounce cursor-pointer z-20 hover:text-[#c2784f] transition-colors" onClick={() => handleScrollToId('hakkimizda')}>
-              <span className="text-[9px] tracking-[0.3em] uppercase font-bold block mb-1 opacity-70 text-center">Keşfet</span>
-              <div className="w-5 h-8 sm:w-6 sm:h-9 border-2 border-white/20 rounded-full flex justify-center p-1 mx-auto">
-                <div className="w-1 h-2 bg-[#c2784f] rounded-full"></div>
+
+              {/* Keşfet Kaydırma İndikatörü (Tam Ortalanmış & Butonların Altında) */}
+              <div 
+                className="mt-8 sm:mt-12 flex flex-col items-center justify-center text-center text-white/50 hover:text-[#c2784f] transition-colors cursor-pointer animate-bounce pointer-events-auto"
+                onClick={() => handleScrollToId('hakkimizda')}
+                title="Aşağı Kaydır"
+              >
+                 <span className="text-[10px] tracking-[0.25em] uppercase font-bold block mb-1.5 opacity-70 text-center pl-1">Keşfet</span>
+                 <div className="w-5 h-8 sm:w-6 sm:h-9 border-2 border-white/25 rounded-full flex justify-center p-1 shadow-lg bg-black/20 backdrop-blur-sm">
+                   <div className="w-1 h-2 bg-[#c2784f] rounded-full"></div>
+                 </div>
               </div>
            </div>
         </header>
@@ -1924,19 +2299,23 @@ export default function App() {
 
         </main>
 
-        {renderFooter()}
+        <div className="pb-24 md:pb-0">
+          {renderFooter()}
+        </div>
+
+        {renderMobileBottomDock()}
         {renderModals()}
         
-        {/* WHATSAPP YÜZEN BUTON (Pulsing Beacon & Tactile Press) */}
+        {/* WHATSAPP YÜZEN BUTON (Masaüstünde Sağ Altta) */}
         <a 
-          href={`https://wa.me/${WHATSAPP_NO}?text=Merhaba%20Salaas%20Cafe,%20`} 
+          href={`https://wa.me/${WHATSAPP_NO}?text=${encodeURIComponent('Merhaba Salaaş Cafe, ')}`} 
           target="_blank" 
           rel="noreferrer" 
-          className="fixed bottom-6 right-5 sm:right-6 z-50 bg-[#25D366] hover:bg-[#20b858] text-white px-4 py-3 sm:px-5 sm:py-3.5 rounded-full font-black shadow-2xl flex items-center justify-center gap-2 transition-transform hover:scale-105 active-press animate-beacon border-2 border-white/80"
+          className="hidden md:flex fixed bottom-6 right-6 z-40 bg-[#25D366] hover:bg-[#20b858] text-white px-5 py-3.5 rounded-full font-black shadow-2xl items-center justify-center gap-2 transition-transform hover:scale-105 active-press animate-beacon border-2 border-white/80"
           aria-label="WhatsApp İletişim"
         >
           <span className="text-xl">💬</span>
-          <span className="hidden sm:block text-xs font-black uppercase tracking-widest">WhatsApp</span>
+          <span className="text-xs font-black uppercase tracking-widest">WhatsApp</span>
         </a>
       </div>
     );
@@ -1955,17 +2334,18 @@ export default function App() {
 
         {renderNavbar(true)}
         
-        <div className="sticky top-[72px] sm:top-[80px] z-[45] glass border-b border-white/5 py-3 sm:py-4 shadow-xl w-full">
-           <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-16 xl:px-24 flex overflow-x-auto gap-3 sm:gap-4 hide-scrollbar items-center">
+        {/* Sabit Kategori Çubuğu (Üst Menüyle Çakışmaz, Aşağı İndikçe Yapışık Kalır & Aktif Kategori Işığı Yanar) */}
+        <div className="fixed top-[52px] sm:top-[66px] left-0 w-full z-40 glass border-b border-white/10 py-2 sm:py-2.5 shadow-2xl backdrop-blur-xl">
+           <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-16 xl:px-24 flex overflow-x-auto gap-2.5 sm:gap-4 hide-scrollbar items-center">
               {activeMenuCategories.map(cat => (
                   <button 
                     id={`btn-${cat.id}`}
                     key={cat.id} 
                     onClick={() => scrollToMenuCategory(cat.id)} 
-                    className={`whitespace-nowrap px-6 sm:px-8 py-2.5 sm:py-3 rounded-full transition-all uppercase text-[10px] sm:text-xs font-black tracking-[0.2em] flex-shrink-0 ${
+                    className={`whitespace-nowrap px-5 sm:px-8 py-2 sm:py-2.5 rounded-full transition-all uppercase text-[10px] sm:text-xs font-black tracking-[0.2em] flex-shrink-0 active-press ${
                       activeCategory === cat.id 
-                        ? 'btn-premium' 
-                        : 'btn-outline-premium bg-white/5'
+                        ? 'btn-premium text-white ring-2 ring-[#e09f7a] shadow-[0_0_22px_rgba(194,120,79,0.7)] scale-105 glow-copper' 
+                        : 'btn-outline-premium bg-white/5 text-slate-300 opacity-70 hover:opacity-100 hover:border-[#c2784f]/40'
                     }`}
                   >
                       {cat.name}
@@ -1974,7 +2354,7 @@ export default function App() {
            </div>
         </div>
 
-        <main className="w-full mx-auto px-4 sm:px-8 lg:px-16 xl:px-24 pt-12 md:pt-24 pb-16 md:pb-24 relative z-10">
+        <main className="w-full mx-auto px-4 sm:px-8 lg:px-16 xl:px-24 pt-32 sm:pt-40 pb-16 md:pb-24 relative z-10">
            {activeGallery.length > 0 && (
              <div className="mb-28">
                 <div className="text-center mb-16">
@@ -2003,7 +2383,7 @@ export default function App() {
               {activeMenuCategories.map(cat => {
                  const CatIcon = cat.Icon || UtensilsCrossed;
                  return (
-                   <div id={`cat-${cat.id}`} key={cat.id} className="scroll-mt-[200px]">
+                   <div id={`cat-${cat.id}`} key={cat.id} className="scroll-mt-[125px] sm:scroll-mt-[145px]">
                       <div className="flex items-center gap-6 mb-12">
                          <div className="bg-[#1c1917] border border-white/10 w-14 h-14 rounded-full flex items-center justify-center shadow-lg shrink-0">
                            <CatIcon size={24} className="text-[#c2784f]" />
@@ -2069,18 +2449,23 @@ export default function App() {
               </a>
            </div>
         </main>
-        {renderFooter()}
+        
+        <div className="pb-24 md:pb-0">
+          {renderFooter()}
+        </div>
+
+        {renderMobileBottomDock()}
         {renderModals()}
 
-        {/* WHATSAPP FLOATING BUTTON */}
+        {/* WHATSAPP FLOATING BUTTON (Masaüstü) */}
         <a 
-          href={`https://wa.me/${WHATSAPP_NO}?text=Merhaba%20Salaas%20Cafe,%20`} 
+          href={`https://wa.me/${WHATSAPP_NO}?text=${encodeURIComponent('Merhaba Salaaş Cafe, ')}`} 
           target="_blank" 
           rel="noreferrer" 
-          className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20b858] text-white px-5 py-3.5 rounded-full font-black shadow-2xl flex items-center justify-center gap-2 transition-transform hover:scale-110 border-4 border-white"
+          className="hidden md:flex fixed bottom-6 right-6 z-40 bg-[#25D366] hover:bg-[#20b858] text-white px-5 py-3.5 rounded-full font-black shadow-2xl items-center justify-center gap-2 transition-transform hover:scale-110 border-4 border-white"
         >
           <span className="text-xl">💬</span>
-          <span className="hidden sm:block text-sm uppercase tracking-widest">WhatsApp</span>
+          <span className="text-sm uppercase tracking-widest font-black">WhatsApp</span>
         </a>
       </div>
     );
@@ -2146,91 +2531,252 @@ export default function App() {
            )}
         </main>
         
-        {renderFooter()}
+        <div className="pb-24 md:pb-0">
+          {renderFooter()}
+        </div>
+
+        {renderMobileBottomDock()}
         {renderModals()}
 
-        {/* WHATSAPP FLOATING BUTTON */}
+        {/* WHATSAPP FLOATING BUTTON (Masaüstü) */}
         <a 
-          href={`https://wa.me/${WHATSAPP_NO}?text=Merhaba%20Salaas%20Cafe,%20`} 
+          href={`https://wa.me/${WHATSAPP_NO}?text=${encodeURIComponent('Merhaba Salaaş Cafe, ')}`} 
           target="_blank" 
           rel="noreferrer" 
-          className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20b858] text-white px-5 py-3.5 rounded-full font-black shadow-2xl flex items-center justify-center gap-2 transition-transform hover:scale-110 border-4 border-white"
+          className="hidden md:flex fixed bottom-6 right-6 z-40 bg-[#25D366] hover:bg-[#20b858] text-white px-5 py-3.5 rounded-full font-black shadow-2xl items-center justify-center gap-2 transition-transform hover:scale-110 border-4 border-white"
         >
           <span className="text-xl">💬</span>
-          <span className="hidden sm:block text-sm uppercase tracking-widest">WhatsApp</span>
+          <span className="text-sm uppercase tracking-widest font-black">WhatsApp</span>
         </a>
       </div>
     );
   }
 
-  // --- SAYFA RENDER: ADMİN PANELİ ---
+  // --- SAYFA RENDER: ADMİN GİRİŞİ VEYA YÖNETİM PANELİ ---
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#0a0908] flex items-center justify-center p-4 relative overflow-hidden text-white font-sans">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#c2784f]/15 rounded-full blur-[140px] pointer-events-none"></div>
+        
+        <div className="bg-[#12100e] border border-[#c2784f]/35 rounded-3xl p-8 sm:p-10 max-w-md w-full shadow-2xl relative z-10 text-white">
+          <div className="flex flex-col items-center text-center mb-8">
+            <img src="/salaaslogobg.png" alt="Salaaş Logo" className="h-16 w-auto object-contain mb-4 select-none" />
+            <h1 className="text-2xl font-serif font-light text-white">Salaaş <span className="text-gradient-copper italic font-black">Yönetim Paneli</span></h1>
+            <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest font-sans font-bold">Yetkili Girişi</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            {loginError && (
+              <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3.5 rounded-xl text-xs font-bold flex items-center gap-2">
+                <AlertTriangle size={16} /> {loginError}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Kullanıcı Adı</label>
+              <input 
+                type="text" 
+                value={loginUser} 
+                onChange={(e) => setLoginUser(e.target.value)} 
+                className="w-full bg-white/5 border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] text-white p-3.5 rounded-xl outline-none font-bold text-sm" 
+                placeholder="salaas" 
+                autoFocus 
+              />
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Şifre</label>
+              <input 
+                type="password" 
+                value={loginPass} 
+                onChange={(e) => setLoginPass(e.target.value)} 
+                className="w-full bg-white/5 border border-white/10 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] text-white p-3.5 rounded-xl outline-none font-bold text-sm" 
+                placeholder="••••••••" 
+              />
+            </div>
+
+            <div className="flex items-center justify-between text-xs pt-1">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input 
+                  type="checkbox" 
+                  checked={rememberMe} 
+                  onChange={(e) => setRememberMe(e.target.checked)} 
+                  className="rounded accent-[#c2784f] w-4 h-4 cursor-pointer" 
+                />
+                <span className="font-medium text-slate-300">Beni Hatırla (Telefonda Kalıcı)</span>
+              </label>
+            </div>
+
+            <button 
+              type="submit" 
+              className="w-full btn-premium py-4 rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 shadow-xl glow-copper active-press mt-2"
+            >
+              <Lock size={16} /> Panele Giriş Yap
+            </button>
+
+            <button 
+              type="button" 
+              onClick={handleNavToHome} 
+              className="w-full text-center text-xs text-slate-400 hover:text-white transition-colors pt-2 active-press"
+            >
+              ← Ana Sayfaya / Vitrine Dön
+            </button>
+          </form>
+
+          <div className="mt-6 pt-6 border-t border-white/10 text-center">
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              💡 <strong>iPhone Safari İpucu:</strong> Giriş yaptıktan sonra Safari'nin Paylaş (📤) menüsünden <strong>"Ana Ekrana Ekle"</strong> diyerek paneli telefonunuza mobil uygulama olarak kaydedebilirsiniz.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- SAYFA RENDER: YÖNETİM PANELİ (GİRİŞ YAPILMIŞ) ---
   return (
     <div className={`min-h-screen font-sans text-slate-800 pb-12 print:bg-white print:pb-0 relative transition-colors duration-500 w-full ${activeAdminTab === 'restoran' || activeAdminTab === 'menu' || activeAdminTab === 'personel' ? 'bg-[#fafafa]' : (activeAdminTab === 'mac' ? 'bg-slate-50' : 'bg-[#fafafa]')}`}>
       {bulkMessage && <div className="fixed top-24 right-4 sm:right-10 z-[100] bg-white text-slate-800 p-4 sm:p-5 rounded-2xl shadow-2xl flex items-center gap-4 max-w-sm border border-slate-200 animate-in slide-in-from-right-8 duration-300"><CheckCircle size={24} className="text-[#c2784f] shrink-0" /><p className="font-medium text-sm sm:text-base leading-snug">{bulkMessage}</p><button type="button" onClick={() => setBulkMessage('')} className="ml-auto text-slate-400 hover:text-slate-800 bg-slate-100 p-1.5 rounded-lg transition-colors shrink-0"><X size={18} /></button></div>}
       <style dangerouslySetInnerHTML={{ __html: GLOBAL_CSS }}></style>
 
       <header className={`bg-white text-slate-800 shadow-sm border-b border-slate-200 sticky z-20 print:hidden transition-colors duration-500 w-full top-0`}>
-        <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-20 py-4 flex items-center justify-between gap-3">
+        <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-20 py-3.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-4 shrink-0">
-            <div className="h-8 sm:h-10 shrink-0 flex items-center justify-center cursor-pointer" onClick={() => setCurrentView('landing')}>
-              <img src="/salaaslogobg.png" alt="Salaaş Cafe Logo" className="h-full w-auto object-contain filter invert opacity-80" />
+            <div className="h-8 sm:h-10 shrink-0 flex items-center justify-center cursor-pointer" onClick={() => handleNavToHome()}>
+              <img src="/salaaslogobg.png" alt="Salaaş Cafe Logo" className="h-full w-auto object-contain select-none" />
             </div>
             <div className="hidden sm:block border-l border-slate-300 pl-4">
               <h1 className={`text-sm md:text-base lg:text-lg font-black tracking-widest uppercase text-slate-700 font-sans`}>Yönetim Paneli</h1>
             </div>
           </div>
-          <div className="flex items-center gap-3 ml-auto">
+          <div className="flex items-center gap-2.5 ml-auto">
+            {/* Müşteri Vitrinini Gör Butonu */}
+            <button 
+              onClick={handleNavToHome} 
+              className="shrink-0 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-colors shadow-sm flex items-center gap-1.5 border border-slate-200"
+              title="Siteyi müşteri gözünden görüntüle"
+            >
+              <Eye size={15}/> <span className="hidden sm:inline">Siteyi Gör</span>
+            </button>
+
             {(activeAdminTab === 'restoran' || activeAdminTab === 'mac') && (
-              <div className="flex shrink-0 items-center bg-slate-50 rounded-xl px-4 py-2 border border-slate-200 hover:bg-slate-100 transition-colors shadow-sm">
+              <div className="flex shrink-0 items-center bg-slate-50 rounded-xl px-3 py-2 border border-slate-200 hover:bg-slate-100 transition-colors shadow-sm">
                 <CalendarDays className={`mr-2 text-[#c2784f]`} size={16} />
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden lg:inline mr-2">Tarih:</span>
-                <input type="date" value={activeAdminTab === 'restoran' ? selectedFilterDate : selectedMatchDate} onChange={(e) => activeAdminTab === 'restoran' ? setSelectedFilterDate(e.target.value) : setSelectedMatchDate(e.target.value)} className="bg-transparent text-white outline-none font-bold cursor-pointer text-sm w-auto" />
+                <input 
+                  type="date" 
+                  value={activeAdminTab === 'restoran' ? selectedFilterDate : selectedMatchDate} 
+                  onChange={(e) => activeAdminTab === 'restoran' ? setSelectedFilterDate(e.target.value) : setSelectedMatchDate(e.target.value)} 
+                  className="bg-transparent text-slate-800 outline-none font-bold cursor-pointer text-xs sm:text-sm w-auto" 
+                />
               </div>
             )}
-            <button onClick={() => {setIsAuthenticated(false); setLoginUser(''); setLoginPass(''); setCurrentView('landing');}} className="shrink-0 bg-red-500 hover:bg-red-600 text-white px-3 py-2 lg:px-4 lg:py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-colors shadow-md whitespace-nowrap">ÇIKIŞ</button>
+            <button onClick={handleLogout} className="shrink-0 bg-red-500 hover:bg-red-600 text-white px-3 py-2 lg:px-4 lg:py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-colors shadow-md whitespace-nowrap active-press">ÇIKIŞ</button>
           </div>
         </div>
         <div className="w-full border-t border-slate-200">
           <div className="w-full overflow-x-auto hide-scrollbar">
             <div className="flex items-center min-w-max px-4 sm:px-8 lg:px-12 xl:px-20 py-2.5 gap-2">
+              <button onClick={() => setActiveAdminTab('talepler')} className={`relative px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'talepler' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}>
+                <Inbox size={16}/> <span>Talepler</span>
+                {pendingRequests.length > 0 && (<span className="bg-red-500 text-white text-[9px] px-2 py-0.5 rounded-full shadow-md font-black border border-white animate-pulse">{pendingRequests.length} Yeni</span>)}
+              </button>
               <button onClick={() => setActiveAdminTab('restoran')} className={`px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'restoran' ? 'bg-[#c2784f] text-white shadow-lg shadow-[#c2784f]/20' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}><UtensilsCrossed size={16}/> <span>Restoran</span></button>
               <button onClick={() => setActiveAdminTab('mac')} className={`px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'mac' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}><MonitorPlay size={16}/> <span>Maç</span></button>
               <button onClick={() => setActiveAdminTab('menu')} className={`px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'menu' ? 'bg-[#c2784f] text-white shadow-lg shadow-[#c2784f]/20' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}><MenuSquare size={16}/> <span>Menü</span></button>
               <button onClick={() => setActiveAdminTab('personel')} className={`px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'personel' ? 'bg-[#c2784f] text-white shadow-lg shadow-[#c2784f]/20' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}><Users size={16}/> <span>Personel</span></button>
-              <button onClick={() => setActiveAdminTab('talepler')} className={`relative px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'talepler' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}>
-                <Inbox size={16}/> <span>Talepler</span>
-                {pendingRequests.length > 0 && (<span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] w-5 h-5 flex items-center justify-center rounded-full shadow-md font-black border border-white">{pendingRequests.length}</span>)}
-              </button>
               <button onClick={() => setActiveAdminTab('gecmis')} className={`px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'gecmis' ? 'bg-slate-800 text-white shadow-lg' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}><History size={16}/> <span>Geçmiş</span></button>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="w-full px-4 sm:px-8 lg:px-12 xl:px-20 mt-8 lg:mt-10 relative z-10">
+      <main className="w-full px-4 sm:px-8 lg:px-12 xl:px-20 mt-6 lg:mt-8 relative z-10">
         
+        {/* IPHONE SAFARI "TELEFONA EKLE" (STANDALONE UYGULAMA REHBERİ) */}
+        {showAdminPwaGuide && (
+          <div className="bg-gradient-to-r from-[#1c1917] via-[#261f1a] to-[#1c1917] border border-[#c2784f]/40 rounded-3xl p-5 sm:p-6 shadow-xl mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 text-white">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#c2784f]/20 border border-[#c2784f]/40 flex items-center justify-center text-[#e09f7a] shrink-0 mt-0.5">
+                <Smartphone size={26} />
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <h4 className="font-bold text-base sm:text-lg text-white">iPhone Safari'de Telefona Ekle</h4>
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Oturum Sürekli Açık Kalır</span>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-light max-w-2xl">
+                  Safari'de alttaki <strong>Paylaş (📤) ➔ 'Ana Ekrana Ekle'</strong> yaparak bu paneli telefonunuza bağımsız bir uygulama gibi yükleyin. Uygulamayı her açtığınızda doğrudan bu ekranda kalır ve bekleyen rezervasyon taleplerini anında kontrol edebilirsiniz.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 w-full md:w-auto shrink-0">
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.origin + '/#admin');
+                  showToast('Panel bağlantısı kopyalandı! Safari adres çubuğuna yapıştırabilirsiniz.', 'success');
+                }}
+                className="flex-1 md:flex-none px-4 py-2.5 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-xs font-bold flex items-center justify-center gap-2 text-slate-200 active-press transition-colors"
+              >
+                <Copy size={15} /> Bağlantıyı Kopyala
+              </button>
+              <button 
+                onClick={() => setShowAdminPwaGuide(false)}
+                className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-white/10 transition-colors"
+                title="Bildirimi Kapat"
+              >
+                <X size={18} />
+              </button>
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div className="flex flex-col items-center justify-center mt-32 relative z-10 w-full text-emerald-600"><Loader2 className="animate-spin mb-4" size={64} /><p className="font-bold text-lg tracking-widest animate-pulse uppercase">Sisteme Bağlanıyor...</p></div>
         ) : activeAdminTab === 'talepler' ? (
           <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-100 w-full">
-            <div className="flex justify-between items-center mb-8 pb-4 border-b border-slate-100">
-               <h2 className="text-2xl font-black text-slate-800 flex items-center gap-3"><Inbox className="text-emerald-500"/> Talepler</h2>
-               <span className="bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-black">{pendingRequests.length} Talep</span>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-4 border-b border-slate-100 gap-3">
+               <div>
+                 <h2 className="text-2xl font-black text-slate-800 flex items-center gap-3"><Inbox className="text-emerald-500"/> Gelen Rezervasyon Talepleri</h2>
+                 <p className="text-xs text-slate-400 mt-1 font-medium">Müşterilerin web sitesinden ilettiği bekleyen talepler</p>
+               </div>
+               <span className="bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-black flex items-center gap-2">
+                 <BellRing size={16} /> {pendingRequests.length} Bekleyen Talep
+               </span>
             </div>
             {pendingRequests.length === 0 ? (
-              <div className="p-12 text-center text-slate-400"><CheckCircle2 size={48} className="mx-auto mb-4 text-emerald-400 opacity-50" /><p className="font-bold text-xl">Bekleyen talep yok.</p></div>
+              <div className="p-16 text-center text-slate-400 flex flex-col items-center justify-center"><CheckCircle2 size={56} className="mb-4 text-emerald-400 opacity-60" /><p className="font-bold text-xl text-slate-700">Bekleyen yeni talep yok.</p><p className="text-sm text-slate-400 mt-1">Müşterilerden gelen yeni rezervasyon istekleri anında burada belirecektir.</p></div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                  {pendingRequests.map(req => (
-                   <div key={req.id} className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-6 flex flex-col relative overflow-hidden">
-                     <div className="absolute top-0 right-0 bg-orange-500 text-white px-4 py-1 rounded-bl-xl font-bold text-[10px] uppercase tracking-wider">{typeLabels[req.type]}</div>
+                   <div key={req.id} className="bg-slate-50 border-2 border-slate-200 hover:border-emerald-500/40 rounded-3xl p-6 flex flex-col relative overflow-hidden shadow-sm transition-all">
+                     <div className="absolute top-0 right-0 bg-[#c2784f] text-white px-4 py-1 rounded-bl-xl font-bold text-[10px] uppercase tracking-wider shadow-sm">{typeLabels[req.type] || req.type}</div>
                      <h3 className="text-xl font-black text-slate-800 mt-2">{req.name}</h3>
-                     <p className="text-sm font-bold text-slate-500 flex items-center gap-2 mt-1 mb-4"><Phone size={14}/>{req.phone}</p>
-                     <div className="flex gap-2 mb-4"><span className="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">{req.date}</span><span className="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">{req.peopleCount} Kişi</span></div>
-                     {req.notes && <div className="bg-amber-50 p-3 rounded-xl mb-4 text-xs font-bold text-amber-800">"{req.notes}"</div>}
-                     <div className="mt-auto flex flex-col gap-2">
-                        <button onClick={() => handleApproveRequest(req, true)} className="bg-[#25D366] text-white py-2.5 rounded-xl text-xs font-black uppercase flex items-center justify-center gap-2"><MessageCircle size={16}/> Onayla & WA</button>
-                        <div className="flex gap-2"><button onClick={() => handleApproveRequest(req, false)} className="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-colors shadow-sm flex items-center justify-center gap-2 border border-emerald-200"><Check size={14} className="inline mr-1"/> Onayla</button><button onClick={() => handleRejectRequest(req.id)} className="bg-slate-200 hover:bg-red-500 text-slate-600 hover:text-white px-3 rounded-xl transition-colors"><Trash2 size={14}/></button></div>
+                     <a href={`tel:${req.phone}`} className="text-sm font-bold text-slate-600 hover:text-emerald-600 flex items-center gap-2 mt-1 mb-4 transition-colors"><Phone size={14} className="text-emerald-500"/>{req.phone}</a>
+                     <div className="flex gap-2 mb-4">
+                       <span className="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm text-slate-700">📅 {req.date}</span>
+                       <span className="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm text-slate-700">👥 {req.peopleCount} Kişi</span>
+                     </div>
+                     {req.notes && <div className="bg-amber-50 border border-amber-100 p-3 rounded-xl mb-4 text-xs font-medium text-amber-900 leading-relaxed italic">"{req.notes}"</div>}
+                     <div className="mt-auto flex flex-col gap-2 pt-2 border-t border-slate-200">
+                        {/* Hızlı Arama & WhatsApp Onay */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <a href={`tel:${req.phone}`} className="bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-3 rounded-xl text-xs font-black uppercase flex items-center justify-center gap-1.5 active-press shadow-sm transition-colors">
+                            <Phone size={14}/> Ara
+                          </a>
+                          <button onClick={() => handleApproveRequest(req, true)} className="bg-[#25D366] hover:bg-[#20b858] text-white py-2.5 px-3 rounded-xl text-xs font-black uppercase flex items-center justify-center gap-1.5 active-press shadow-sm transition-colors">
+                            <MessageCircle size={15}/> WA Onay
+                          </button>
+                        </div>
+                        {/* Masaya Al Onayla & Reddet */}
+                        <div className="flex gap-2">
+                          <button onClick={() => handleApproveRequest(req, false)} className="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-colors shadow-sm flex items-center justify-center gap-1.5 border border-emerald-300 active-press">
+                            <Check size={15}/> Masaya Ekle
+                          </button>
+                          <button onClick={() => handleRejectRequest(req.id)} className="bg-slate-200 hover:bg-red-500 text-slate-600 hover:text-white px-3.5 rounded-xl transition-colors active-press" title="Talebi Reddet / Sil">
+                            <Trash2 size={15}/>
+                          </button>
+                        </div>
                      </div>
                    </div>
                  ))}
