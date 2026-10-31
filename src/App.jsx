@@ -2128,11 +2128,6 @@ export default function App() {
 
            <div className="relative z-10 text-center px-4 sm:px-6 w-full max-w-6xl mx-auto flex flex-col items-center justify-center h-full">
               
-              {/* SEO Konum & İmza Rozeti */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#c2784f]/15 border border-[#c2784f]/35 text-[#e09f7a] text-[11px] sm:text-xs font-black tracking-widest uppercase mb-4 sm:mb-6 animate-fade-in-up shadow-[0_0_20px_rgba(194,120,79,0.25)]">
-                <Sparkles size={13} className="text-[#c2784f]" /> Gebze'nin 1 Numaralı Serpme Kahvaltı &amp; Canlı Maç Mekanı
-              </div>
-
               <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-white font-serif mb-4 sm:mb-6 drop-shadow-2xl animate-fade-in-up leading-[1.12]">
                 Gebze'nin En Sevilen <span className="text-gradient-copper italic font-light">Serpme Kahvaltısı</span> &amp; Lezzet Durağı
               </h1>
