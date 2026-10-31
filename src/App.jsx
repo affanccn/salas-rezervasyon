@@ -1927,52 +1927,53 @@ export default function App() {
       )}
 
       {/* YÖNETİM PANELİ YORUM CEVAPLAMA MODALI */}
+      {/* YÖNETİM PANELİ YORUM CEVAPLAMA MODALI */}
       {managingReviewsFor && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200">
-           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
-              <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+           <div className="bg-[#12100e] border border-[#c2784f]/35 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] text-white">
+              <div className="p-6 border-b border-white/10 flex justify-between items-center bg-[#191512] shrink-0">
                 <div>
-                   <h3 className="font-black text-xl text-slate-800 flex items-center gap-2">
-                     <MessageSquareText className="text-blue-500" /> 
-                     Yorum Yönetimi
+                   <h3 className="font-serif font-light text-xl text-white flex items-center gap-2">
+                     <MessageSquareText className="text-[#c2784f]" /> 
+                     Yorum <span className="text-gradient-copper font-black italic">Yönetimi</span>
                    </h3>
-                   <p className="text-sm font-medium text-slate-500 mt-1">{managingReviewsFor.name} {managingReviewsFor.surname}</p>
+                   <p className="text-xs font-medium text-slate-400 mt-1">{managingReviewsFor.name} {managingReviewsFor.surname}</p>
                 </div>
-                <button type="button" onClick={()=>setManagingReviewsFor(null)} className="p-3 bg-white hover:bg-slate-200 rounded-full transition-colors shadow-sm w-10 h-10 flex items-center justify-center"><X size={24}/></button>
+                <button type="button" onClick={()=>setManagingReviewsFor(null)} className="p-2.5 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl transition-colors w-10 h-10 flex items-center justify-center border border-white/10"><X size={20}/></button>
               </div>
               
-              <div className="overflow-y-auto flex-1 p-6 space-y-4 bg-white">
+              <div className="overflow-y-auto flex-1 p-6 space-y-4 bg-transparent custom-scrollbar">
                 {(!managingReviewsFor.reviews || managingReviewsFor.reviews.length === 0) ? (
                   <div className="text-center text-slate-400 py-12 flex flex-col items-center">
-                    <MessageCircle size={48} className="mb-4 opacity-30" />
-                    <p className="text-lg font-bold">Henüz yorum yapılmamış.</p>
+                    <MessageCircle size={48} className="mb-4 opacity-30 text-[#c2784f]" />
+                    <p className="text-lg font-serif font-light text-white">Henüz yorum yapılmamış.</p>
                   </div>
                 ) : (
                   managingReviewsFor.reviews.sort((a,b) => new Date(b.date) - new Date(a.date)).map(rev => (
-                    <div key={rev.id} className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                    <div key={rev.id} className="bg-[#1a1613] p-5 rounded-2xl border border-white/10">
                       <div className="flex justify-between items-start mb-3">
                         <div>
-                          <span className="font-bold text-sm text-slate-800 block">{rev.name}</span>
+                          <span className="font-bold text-sm text-white block">{rev.name}</span>
                           <div className="flex gap-0.5 mt-1">
                             {[...Array(5)].map((_, i) => (
-                              <Star key={i} size={12} className={i < rev.rating ? "fill-orange-400 text-orange-400" : "fill-slate-200 text-slate-200"} />
+                              <Star key={i} size={12} className={i < rev.rating ? "fill-[#c2784f] text-[#c2784f]" : "fill-white/10 text-white/10"} />
                             ))}
                           </div>
                         </div>
-                        <button type="button" onClick={() => handleDeleteReview(managingReviewsFor.id, rev.id)} className="text-red-500 bg-red-50 hover:bg-red-500 hover:text-white p-2 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold" title="Yorumu Sil"><Trash2 size={14}/> Sil</button>
+                        <button type="button" onClick={() => handleDeleteReview(managingReviewsFor.id, rev.id)} className="text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white border border-red-500/20 p-2 rounded-xl transition-colors flex items-center gap-1 text-xs font-bold" title="Yorumu Sil"><Trash2 size={14}/> Sil</button>
                       </div>
-                      <p className="text-sm text-slate-700 mb-2">{rev.comment}</p>
-                      <span className="text-[10px] font-bold text-slate-400">{new Date(rev.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                      <p className="text-sm text-slate-300 mb-2 leading-relaxed font-light">{rev.comment}</p>
+                      <span className="text-[10px] font-mono text-slate-500">{new Date(rev.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                       
                       {rev.reply ? (
-                        <div className="mt-4 bg-blue-50 p-3.5 rounded-xl border border-blue-100 relative group">
+                        <div className="mt-4 bg-[#c2784f]/10 p-3.5 rounded-xl border border-[#c2784f]/20 relative group">
                           <div className="flex justify-between items-start mb-1">
-                            <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest block">Cevabınız</span>
-                            <button type="button" onClick={() => handleDeleteReply(managingReviewsFor.id, rev.id)} className="text-red-500 hover:text-red-700 p-1 bg-red-50 hover:bg-red-100 rounded transition-colors flex items-center gap-1 text-[10px] font-bold opacity-0 group-hover:opacity-100" title="Cevabı Sil">
+                            <span className="text-[10px] font-black text-[#e09f7a] uppercase tracking-widest block">Salaaş Cafe Cevabı</span>
+                            <button type="button" onClick={() => handleDeleteReply(managingReviewsFor.id, rev.id)} className="text-red-400 hover:text-red-300 p-1 bg-red-500/20 hover:bg-red-500/30 rounded transition-colors flex items-center gap-1 text-[10px] font-bold opacity-0 group-hover:opacity-100" title="Cevabı Sil">
                               <Trash2 size={12}/> Sil
                             </button>
                           </div>
-                          <p className="text-sm text-slate-700">{rev.reply}</p>
+                          <p className="text-sm text-slate-200">{rev.reply}</p>
                         </div>
                       ) : (
                         <div className="mt-4 flex flex-col sm:flex-row gap-2">
@@ -1981,12 +1982,12 @@ export default function App() {
                             placeholder="Müşteriye yanıt yazın..." 
                             value={replyTexts[rev.id] || ''} 
                             onChange={(e) => setReplyTexts({...replyTexts, [rev.id]: e.target.value})} 
-                            className="flex-1 text-sm p-3 rounded-xl border border-slate-300 focus:border-blue-500 outline-none font-medium bg-white text-slate-800"
+                            className="flex-1 text-sm p-3 rounded-xl border border-white/10 focus:border-[#c2784f] outline-none font-medium bg-white/5 text-white placeholder-slate-500"
                           />
                           <button 
                             type="button" 
                             onClick={() => handleReplyReview(managingReviewsFor.id, rev.id)} 
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1 shadow-md"
+                            className="bg-gradient-to-r from-[#c2784f] to-[#a16241] hover:from-[#d99268] hover:to-[#c2784f] text-white px-5 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md active-press"
                           >
                             <MessageCircle size={14}/> Cevapla
                           </button>
@@ -2001,32 +2002,32 @@ export default function App() {
       )}
 
       {showCategoryModal && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200">
-           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col p-6">
-              <h3 className="font-black text-lg mb-4 text-slate-800">Yeni Kategori Ekle</h3>
-              <input type="text" placeholder="Örn: Tatlılar" value={newCategoryName} onChange={(e)=>setNewCategoryName(e.target.value)} className="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-emerald-500 outline-none font-bold mb-6 text-slate-800 bg-white" autoFocus />
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+           <div className="bg-[#12100e] border border-[#c2784f]/35 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] w-full max-w-sm overflow-hidden flex flex-col p-6 text-white">
+              <h3 className="font-serif font-light text-xl mb-4 text-white">Yeni <span className="text-gradient-copper font-black italic">Kategori</span> Ekle</h3>
+              <input type="text" placeholder="Örn: Tatlılar" value={newCategoryName} onChange={(e)=>setNewCategoryName(e.target.value)} className="w-full p-3.5 border border-white/10 rounded-2xl focus:border-[#c2784f] outline-none font-bold mb-6 text-white bg-white/5 placeholder-slate-500" autoFocus />
               <div className="flex gap-3">
-                 <button type="button" onClick={()=>setShowCategoryModal(false)} className="flex-1 py-3 text-slate-500 font-bold hover:bg-slate-100 rounded-xl transition-colors">İptal</button>
-                 <button type="button" onClick={handleAddCategory} className="flex-1 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-md hover:bg-emerald-700 transition-colors">Ekle</button>
+                 <button type="button" onClick={()=>setShowCategoryModal(false)} className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-xl transition-colors border border-white/10">İptal</button>
+                 <button type="button" onClick={handleAddCategory} className="flex-1 py-3 btn-premium font-bold rounded-xl shadow-md transition-colors text-xs uppercase tracking-wider">Ekle</button>
               </div>
            </div>
         </div>
       )}
 
       {personnelDeleteConfirmId && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+          <div className="bg-[#12100e] border border-red-500/30 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200 text-white">
             <div className="p-8 flex flex-col items-center text-center gap-5">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                <Trash2 size={28} className="text-red-500" />
+              <div className="w-16 h-16 bg-red-500/10 border border-red-500/20 text-red-400 rounded-full flex items-center justify-center">
+                <Trash2 size={28} />
               </div>
               <div>
-                <h3 className="text-xl font-black text-slate-800 mb-2">Personeli Sil</h3>
-                <p className="text-slate-500 font-medium">Bu personeli silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+                <h3 className="text-xl font-serif font-light text-white mb-2">Personeli Sil</h3>
+                <p className="text-slate-400 text-xs sm:text-sm font-light">Bu personeli silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
               </div>
               <div className="flex gap-3 w-full">
-                <button type="button" onClick={() => setPersonnelDeleteConfirmId(null)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 text-slate-600 font-black hover:bg-slate-50 transition-colors">İptal</button>
-                <button type="button" onClick={() => executeDeletePersonnel(personnelDeleteConfirmId)} className="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-black transition-colors shadow-md">Evet, Sil</button>
+                <button type="button" onClick={() => setPersonnelDeleteConfirmId(null)} className="flex-1 py-3 rounded-xl border border-white/10 bg-white/5 text-slate-300 font-bold hover:bg-white/10 transition-colors text-xs uppercase tracking-wider">İptal</button>
+                <button type="button" onClick={() => executeDeletePersonnel(personnelDeleteConfirmId)} className="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition-colors shadow-md text-xs uppercase tracking-wider">Evet, Sil</button>
               </div>
             </div>
           </div>
@@ -2034,19 +2035,19 @@ export default function App() {
       )}
 
       {showImportConfirm && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+          <div className="bg-[#12100e] border border-[#c2784f]/35 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200 text-white">
             <div className="p-8 flex flex-col items-center text-center gap-5">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
-                <MenuSquare size={28} className="text-orange-500" />
+              <div className="w-16 h-16 bg-[#c2784f]/15 border border-[#c2784f]/30 text-[#e09f7a] rounded-full flex items-center justify-center">
+                <MenuSquare size={28} />
               </div>
               <div>
-                <h3 className="text-xl font-black text-slate-800 mb-2">Varsayılan Menüyü Aktar</h3>
-                <p className="text-slate-500 font-medium">Varsayılan menü öğeleri veritabanına eklenecektir. Onaylıyor musunuz?</p>
+                <h3 className="text-xl font-serif font-light text-white mb-2">Varsayılan Menüyü Aktar</h3>
+                <p className="text-slate-400 text-xs sm:text-sm font-light">Varsayılan menü öğeleri veritabanına eklenecektir. Onaylıyor musunuz?</p>
               </div>
               <div className="flex gap-3 w-full">
-                <button type="button" onClick={() => setShowImportConfirm(false)} className="flex-1 py-3 rounded-xl border-2 border-slate-200 text-slate-600 font-black hover:bg-slate-50 transition-colors">İptal</button>
-                <button type="button" onClick={importDefaultMenu} className="flex-1 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black transition-colors shadow-md">Aktar</button>
+                <button type="button" onClick={() => setShowImportConfirm(false)} className="flex-1 py-3 rounded-xl border border-white/10 bg-white/5 text-slate-300 font-bold hover:bg-white/10 transition-colors text-xs uppercase tracking-wider">İptal</button>
+                <button type="button" onClick={importDefaultMenu} className="flex-1 py-3 rounded-xl btn-premium text-white font-bold transition-colors shadow-md text-xs uppercase tracking-wider">Aktar</button>
               </div>
             </div>
           </div>
@@ -2635,57 +2636,150 @@ export default function App() {
 
   // --- SAYFA RENDER: YÖNETİM PANELİ (GİRİŞ YAPILMIŞ) ---
   return (
-    <div className={`min-h-screen font-sans text-slate-800 pb-12 print:bg-white print:pb-0 relative transition-colors duration-500 w-full ${activeAdminTab === 'restoran' || activeAdminTab === 'menu' || activeAdminTab === 'personel' ? 'bg-[#fafafa]' : (activeAdminTab === 'mac' ? 'bg-slate-50' : 'bg-[#fafafa]')}`}>
-      {bulkMessage && <div className="fixed top-24 right-4 sm:right-10 z-[100] bg-white text-slate-800 p-4 sm:p-5 rounded-2xl shadow-2xl flex items-center gap-4 max-w-sm border border-slate-200 animate-in slide-in-from-right-8 duration-300"><CheckCircle size={24} className="text-[#c2784f] shrink-0" /><p className="font-medium text-sm sm:text-base leading-snug">{bulkMessage}</p><button type="button" onClick={() => setBulkMessage('')} className="ml-auto text-slate-400 hover:text-slate-800 bg-slate-100 p-1.5 rounded-lg transition-colors shrink-0"><X size={18} /></button></div>}
-      <style dangerouslySetInnerHTML={{ __html: GLOBAL_CSS }}></style>
+    <div className="min-h-screen bg-[#0a0908] text-slate-100 font-sans pb-32 md:pb-16 relative overflow-x-hidden w-full selection:bg-[#c2784f] selection:text-white print:bg-white print:text-black print:pb-0">
+      {/* Ambient Luxury Copper Glows */}
+      <div className="pointer-events-none fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#c2784f]/10 rounded-full blur-[140px]"></div>
+      <div className="pointer-events-none fixed bottom-0 right-0 w-[500px] h-[400px] bg-[#c2784f]/5 rounded-full blur-[150px]"></div>
 
-      <header className={`bg-white text-slate-800 shadow-sm border-b border-slate-200 sticky z-20 print:hidden transition-colors duration-500 w-full top-0`}>
-        <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-20 py-3.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-4 shrink-0">
-            <div className="h-8 sm:h-10 shrink-0 flex items-center justify-center cursor-pointer" onClick={() => handleNavToHome()}>
-              <img src="/salaaslogobg.png" alt="Salaaş Cafe Logo" className="h-full w-auto object-contain select-none" />
+      {bulkMessage && (
+        <div className="fixed top-24 right-4 sm:right-10 z-[100] bg-[#14110e] text-white p-4 sm:p-5 rounded-2xl shadow-2xl flex items-center gap-4 max-w-sm border border-[#c2784f]/40 animate-in slide-in-from-right-8 duration-300">
+          <CheckCircle size={24} className="text-[#c2784f] shrink-0" />
+          <p className="font-medium text-sm sm:text-base leading-snug">{bulkMessage}</p>
+          <button type="button" onClick={() => setBulkMessage('')} className="ml-auto text-slate-400 hover:text-white bg-white/5 p-1.5 rounded-lg transition-colors shrink-0">
+            <X size={18} />
+          </button>
+        </div>
+      )}
+
+      <header className="bg-[#0a0908]/95 backdrop-blur-xl border-b border-white/10 sticky top-0 z-30 print:hidden transition-colors duration-300 w-full shadow-lg">
+        {/* Üst Bar: Logo, Başlık, Siteyi Gör, Tarih Seçici, Çıkış */}
+        <div className="w-full px-4 sm:px-8 lg:px-12 py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3.5 shrink-0">
+            <div className="h-9 sm:h-11 shrink-0 flex items-center justify-center cursor-pointer active-press" onClick={handleNavToHome} title="Ana Sayfaya Git">
+              <img src="/salaaslogobg.png" alt="Salaaş Cafe Logo" className="h-full w-auto object-contain select-none drop-shadow-md" />
             </div>
-            <div className="hidden sm:block border-l border-slate-300 pl-4">
-              <h1 className={`text-sm md:text-base lg:text-lg font-black tracking-widest uppercase text-slate-700 font-sans`}>Yönetim Paneli</h1>
+            <div className="hidden sm:block border-l border-white/10 pl-3.5">
+              <span className="text-[10px] uppercase tracking-[0.25em] text-[#c2784f] font-black block">Salaaş Cafe & Restaurant</span>
+              <h1 className="text-sm font-serif font-light text-white tracking-wide">Yönetim <span className="text-gradient-copper italic font-black">Paneli</span></h1>
             </div>
           </div>
-          <div className="flex items-center gap-2.5 ml-auto">
+
+          <div className="flex items-center gap-2 sm:gap-2.5 ml-auto">
             {/* Müşteri Vitrinini Gör Butonu */}
             <button 
               onClick={handleNavToHome} 
-              className="shrink-0 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-colors shadow-sm flex items-center gap-1.5 border border-slate-200"
+              className="shrink-0 bg-white/5 hover:bg-white/10 text-slate-200 hover:text-white px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 border border-white/10 active-press"
               title="Siteyi müşteri gözünden görüntüle"
             >
-              <Eye size={15}/> <span className="hidden sm:inline">Siteyi Gör</span>
+              <Eye size={15} className="text-[#c2784f]" /> <span className="hidden sm:inline">Siteyi Gör</span>
             </button>
 
             {(activeAdminTab === 'restoran' || activeAdminTab === 'mac') && (
-              <div className="flex shrink-0 items-center bg-slate-50 rounded-xl px-3 py-2 border border-slate-200 hover:bg-slate-100 transition-colors shadow-sm">
-                <CalendarDays className={`mr-2 text-[#c2784f]`} size={16} />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden lg:inline mr-2">Tarih:</span>
+              <div className="flex shrink-0 items-center bg-white/5 rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 border border-white/10 shadow-sm">
+                <CalendarDays className="mr-1.5 text-[#c2784f]" size={15} />
                 <input 
                   type="date" 
                   value={activeAdminTab === 'restoran' ? selectedFilterDate : selectedMatchDate} 
                   onChange={(e) => activeAdminTab === 'restoran' ? setSelectedFilterDate(e.target.value) : setSelectedMatchDate(e.target.value)} 
-                  className="bg-transparent text-slate-800 outline-none font-bold cursor-pointer text-xs sm:text-sm w-auto" 
+                  className="bg-transparent text-white outline-none font-bold cursor-pointer text-xs sm:text-sm w-auto [color-scheme:dark]" 
                 />
               </div>
             )}
-            <button onClick={handleLogout} className="shrink-0 bg-red-500 hover:bg-red-600 text-white px-3 py-2 lg:px-4 lg:py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-colors shadow-md whitespace-nowrap active-press">ÇIKIŞ</button>
+
+            <button 
+              onClick={handleLogout} 
+              className="shrink-0 bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white border border-red-500/30 hover:border-red-500 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md whitespace-nowrap active-press"
+            >
+              ÇIKIŞ
+            </button>
           </div>
         </div>
-        <div className="w-full border-t border-slate-200">
-          <div className="w-full overflow-x-auto hide-scrollbar">
-            <div className="flex items-center min-w-max px-4 sm:px-8 lg:px-12 xl:px-20 py-2.5 gap-2">
-              <button onClick={() => setActiveAdminTab('talepler')} className={`relative px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'talepler' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}>
-                <Inbox size={16}/> <span>Talepler</span>
-                {pendingRequests.length > 0 && (<span className="bg-red-500 text-white text-[9px] px-2 py-0.5 rounded-full shadow-md font-black border border-white animate-pulse">{pendingRequests.length} Yeni</span>)}
+
+        {/* ÜST KAYDIRILABİLİR SEKME MENÜSÜ (Yatay Kaydırılabilir ve Mobil Dostu) */}
+        <div className="w-full border-t border-white/10 relative">
+          {/* Sağ kaydırma ipucu gölgesi (Mobilde sekmelerin sağa devam ettiğini hissettirir) */}
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#0a0908] to-transparent z-10 md:hidden flex items-center justify-end pr-1 text-[#c2784f]">
+            <span className="text-xs font-bold animate-pulse">›</span>
+          </div>
+
+          <div className="w-full overflow-x-auto hide-scrollbar scroll-smooth touch-pan-x" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div className="flex items-center min-w-max px-4 sm:px-8 lg:px-12 py-2 gap-2">
+              {/* 1. Talepler */}
+              <button 
+                onClick={() => setActiveAdminTab('talepler')} 
+                className={`relative px-4 sm:px-5 py-2.5 rounded-2xl text-[11px] sm:text-xs font-black tracking-wider uppercase transition-all flex items-center gap-2 shrink-0 active-press ${
+                  activeAdminTab === 'talepler' 
+                    ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/30 border border-emerald-400/30 ring-1 ring-emerald-400/50' 
+                    : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/5'
+                }`}
+              >
+                <Inbox size={15} /> <span>Talepler</span>
+                {pendingRequests.length > 0 && (
+                  <span className="bg-red-500 text-white text-[9px] px-2 py-0.5 rounded-full shadow-md font-black border border-white/40 animate-pulse">
+                    {pendingRequests.length} Yeni
+                  </span>
+                )}
               </button>
-              <button onClick={() => setActiveAdminTab('restoran')} className={`px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'restoran' ? 'bg-[#c2784f] text-white shadow-lg shadow-[#c2784f]/20' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}><UtensilsCrossed size={16}/> <span>Restoran</span></button>
-              <button onClick={() => setActiveAdminTab('mac')} className={`px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'mac' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}><MonitorPlay size={16}/> <span>Maç</span></button>
-              <button onClick={() => setActiveAdminTab('menu')} className={`px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'menu' ? 'bg-[#c2784f] text-white shadow-lg shadow-[#c2784f]/20' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}><MenuSquare size={16}/> <span>Menü</span></button>
-              <button onClick={() => setActiveAdminTab('personel')} className={`px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'personel' ? 'bg-[#c2784f] text-white shadow-lg shadow-[#c2784f]/20' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}><Users size={16}/> <span>Personel</span></button>
-              <button onClick={() => setActiveAdminTab('gecmis')} className={`px-4 sm:px-6 py-2.5 rounded-xl text-[11px] sm:text-xs font-black tracking-widest uppercase transition-all flex items-center gap-2 shrink-0 ${activeAdminTab === 'gecmis' ? 'bg-slate-800 text-white shadow-lg' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`}><History size={16}/> <span>Geçmiş</span></button>
+
+              {/* 2. Restoran */}
+              <button 
+                onClick={() => setActiveAdminTab('restoran')} 
+                className={`px-4 sm:px-5 py-2.5 rounded-2xl text-[11px] sm:text-xs font-black tracking-wider uppercase transition-all flex items-center gap-2 shrink-0 active-press ${
+                  activeAdminTab === 'restoran' 
+                    ? 'bg-gradient-to-r from-[#c2784f] to-[#d99268] text-white shadow-lg shadow-[#c2784f]/30 border border-[#e09f7a]/40 ring-1 ring-[#e09f7a]/50' 
+                    : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/5'
+                }`}
+              >
+                <UtensilsCrossed size={15} /> <span>Restoran</span>
+              </button>
+
+              {/* 3. Maç */}
+              <button 
+                onClick={() => setActiveAdminTab('mac')} 
+                className={`px-4 sm:px-5 py-2.5 rounded-2xl text-[11px] sm:text-xs font-black tracking-wider uppercase transition-all flex items-center gap-2 shrink-0 active-press ${
+                  activeAdminTab === 'mac' 
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 border border-blue-400/40 ring-1 ring-blue-400/50' 
+                    : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/5'
+                }`}
+              >
+                <MonitorPlay size={15} /> <span>Maç</span>
+              </button>
+
+              {/* 4. Menü */}
+              <button 
+                onClick={() => setActiveAdminTab('menu')} 
+                className={`px-4 sm:px-5 py-2.5 rounded-2xl text-[11px] sm:text-xs font-black tracking-wider uppercase transition-all flex items-center gap-2 shrink-0 active-press ${
+                  activeAdminTab === 'menu' 
+                    ? 'bg-gradient-to-r from-[#c2784f] to-[#d99268] text-white shadow-lg shadow-[#c2784f]/30 border border-[#e09f7a]/40 ring-1 ring-[#e09f7a]/50' 
+                    : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/5'
+                }`}
+              >
+                <MenuSquare size={15} /> <span>Menü</span>
+              </button>
+
+              {/* 5. Personel */}
+              <button 
+                onClick={() => setActiveAdminTab('personel')} 
+                className={`px-4 sm:px-5 py-2.5 rounded-2xl text-[11px] sm:text-xs font-black tracking-wider uppercase transition-all flex items-center gap-2 shrink-0 active-press ${
+                  activeAdminTab === 'personel' 
+                    ? 'bg-gradient-to-r from-[#c2784f] to-[#d99268] text-white shadow-lg shadow-[#c2784f]/30 border border-[#e09f7a]/40 ring-1 ring-[#e09f7a]/50' 
+                    : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/5'
+                }`}
+              >
+                <Users size={15} /> <span>Personel</span>
+              </button>
+
+              {/* 6. Geçmiş */}
+              <button 
+                onClick={() => setActiveAdminTab('gecmis')} 
+                className={`px-4 sm:px-5 py-2.5 rounded-2xl text-[11px] sm:text-xs font-black tracking-wider uppercase transition-all flex items-center gap-2 shrink-0 active-press ${
+                  activeAdminTab === 'gecmis' 
+                    ? 'bg-white/20 text-white shadow-lg border border-white/30 ring-1 ring-white/30' 
+                    : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/5'
+                }`}
+              >
+                <History size={15} /> <span>Geçmiş</span>
+              </button>
             </div>
           </div>
         </div>
@@ -2695,14 +2789,14 @@ export default function App() {
         
         {/* IPHONE SAFARI "TELEFONA EKLE" (STANDALONE UYGULAMA REHBERİ) */}
         {showAdminPwaGuide && (
-          <div className="bg-gradient-to-r from-[#1c1917] via-[#261f1a] to-[#1c1917] border border-[#c2784f]/40 rounded-3xl p-5 sm:p-6 shadow-xl mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 text-white">
+          <div className="bg-gradient-to-r from-[#171310] via-[#211914] to-[#171310] border border-[#c2784f]/40 rounded-3xl p-5 sm:p-6 shadow-[0_10px_35px_rgba(0,0,0,0.6)] mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 text-white animate-in fade-in duration-300">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#c2784f]/20 border border-[#c2784f]/40 flex items-center justify-center text-[#e09f7a] shrink-0 mt-0.5">
+              <div className="w-12 h-12 rounded-2xl bg-[#c2784f]/20 border border-[#c2784f]/40 flex items-center justify-center text-[#e09f7a] shrink-0 mt-0.5 shadow-[0_0_20px_rgba(194,120,79,0.25)]">
                 <Smartphone size={26} />
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <h4 className="font-bold text-base sm:text-lg text-white">iPhone Safari'de Telefona Ekle</h4>
+                  <h4 className="font-serif font-light text-base sm:text-lg text-white">iPhone Safari'de <span className="text-gradient-copper font-black italic">Telefona Ekle</span></h4>
                   <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Oturum Sürekli Açık Kalır</span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-light max-w-2xl">
@@ -2732,48 +2826,70 @@ export default function App() {
         )}
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center mt-32 relative z-10 w-full text-emerald-600"><Loader2 className="animate-spin mb-4" size={64} /><p className="font-bold text-lg tracking-widest animate-pulse uppercase">Sisteme Bağlanıyor...</p></div>
+          <div className="flex flex-col items-center justify-center mt-32 relative z-10 w-full text-[#c2784f]">
+            <Loader2 className="animate-spin mb-4" size={56} />
+            <p className="font-serif font-light text-lg tracking-widest uppercase text-white animate-pulse">Sisteme Bağlanıyor...</p>
+          </div>
         ) : activeAdminTab === 'talepler' ? (
-          <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-100 w-full">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-4 border-b border-slate-100 gap-3">
+          /* TALEPLER PANELİ */
+          <div className="bg-[#14110e]/95 backdrop-blur-xl rounded-3xl p-5 sm:p-8 shadow-2xl border border-white/10 w-full">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-5 border-b border-white/10 gap-4">
                <div>
-                 <h2 className="text-2xl font-black text-slate-800 flex items-center gap-3"><Inbox className="text-emerald-500"/> Gelen Rezervasyon Talepleri</h2>
-                 <p className="text-xs text-slate-400 mt-1 font-medium">Müşterilerin web sitesinden ilettiği bekleyen talepler</p>
+                 <span className="text-[10px] uppercase tracking-[0.25em] text-emerald-400 font-black">Canlı Gelen İstekler</span>
+                 <h2 className="text-xl sm:text-2xl font-serif font-light text-white flex items-center gap-3 mt-0.5">
+                   <Inbox className="text-emerald-400" size={24}/> Rezervasyon <span className="text-gradient-copper font-black italic">Talepleri</span>
+                 </h2>
+                 <p className="text-xs text-slate-400 mt-1 font-medium">Müşterilerin web sitesinden ilettiği anlık bekleyen istekler</p>
                </div>
-               <span className="bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-black flex items-center gap-2">
-                 <BellRing size={16} /> {pendingRequests.length} Bekleyen Talep
+               <span className="bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 shadow-sm">
+                 <BellRing size={15} className="animate-bounce" /> {pendingRequests.length} Bekleyen Talep
                </span>
             </div>
             {pendingRequests.length === 0 ? (
-              <div className="p-16 text-center text-slate-400 flex flex-col items-center justify-center"><CheckCircle2 size={56} className="mb-4 text-emerald-400 opacity-60" /><p className="font-bold text-xl text-slate-700">Bekleyen yeni talep yok.</p><p className="text-sm text-slate-400 mt-1">Müşterilerden gelen yeni rezervasyon istekleri anında burada belirecektir.</p></div>
+              <div className="p-16 text-center text-slate-400 flex flex-col items-center justify-center">
+                <div className="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4 text-emerald-400">
+                  <CheckCircle2 size={40} />
+                </div>
+                <p className="font-serif font-light text-2xl text-white">Bekleyen yeni talep yok.</p>
+                <p className="text-xs sm:text-sm text-slate-400 mt-1.5 max-w-sm">Müşterilerden gelen yeni rezervasyon istekleri anında burada sesli ve görsel bildirimle belirecektir.</p>
+              </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                  {pendingRequests.map(req => (
-                   <div key={req.id} className="bg-slate-50 border-2 border-slate-200 hover:border-emerald-500/40 rounded-3xl p-6 flex flex-col relative overflow-hidden shadow-sm transition-all">
-                     <div className="absolute top-0 right-0 bg-[#c2784f] text-white px-4 py-1 rounded-bl-xl font-bold text-[10px] uppercase tracking-wider shadow-sm">{typeLabels[req.type] || req.type}</div>
-                     <h3 className="text-xl font-black text-slate-800 mt-2">{req.name}</h3>
-                     <a href={`tel:${req.phone}`} className="text-sm font-bold text-slate-600 hover:text-emerald-600 flex items-center gap-2 mt-1 mb-4 transition-colors"><Phone size={14} className="text-emerald-500"/>{req.phone}</a>
-                     <div className="flex gap-2 mb-4">
-                       <span className="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm text-slate-700">📅 {req.date}</span>
-                       <span className="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm text-slate-700">👥 {req.peopleCount} Kişi</span>
+                   <div key={req.id} className="bg-[#1a1613] border border-white/10 hover:border-[#c2784f]/50 rounded-3xl p-5 sm:p-6 flex flex-col relative overflow-hidden shadow-xl transition-all group">
+                     <div className="absolute top-0 right-0 bg-gradient-to-r from-[#c2784f] to-[#a16241] text-white px-3.5 py-1 rounded-bl-2xl font-black text-[9px] uppercase tracking-widest shadow-md">
+                       {typeLabels[req.type] || req.type}
                      </div>
-                     {req.notes && <div className="bg-amber-50 border border-amber-100 p-3 rounded-xl mb-4 text-xs font-medium text-amber-900 leading-relaxed italic">"{req.notes}"</div>}
-                     <div className="mt-auto flex flex-col gap-2 pt-2 border-t border-slate-200">
+                     <span className="text-[10px] text-slate-400 font-mono mb-1">{req.createdAt ? new Date(req.createdAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : ''}</span>
+                     <h3 className="text-lg sm:text-xl font-serif font-bold text-white group-hover:text-[#c2784f] transition-colors">{req.name}</h3>
+                     <a href={`tel:${req.phone}`} className="text-xs sm:text-sm font-mono font-bold text-slate-300 hover:text-emerald-400 flex items-center gap-2 mt-1 mb-4 transition-colors">
+                       <Phone size={14} className="text-[#c2784f]"/> {req.phone}
+                     </a>
+                     <div className="flex flex-wrap gap-2 mb-4">
+                       <span className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-200">📅 {req.date}</span>
+                       <span className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-200">👥 {req.peopleCount} Kişi</span>
+                     </div>
+                     {req.notes && (
+                       <div className="bg-[#c2784f]/10 border border-[#c2784f]/25 p-3 rounded-2xl mb-4 text-xs font-medium text-[#f0cfbb] leading-relaxed italic">
+                         "{req.notes}"
+                       </div>
+                     )}
+                     <div className="mt-auto flex flex-col gap-2 pt-3 border-t border-white/10">
                         {/* Hızlı Arama & WhatsApp Onay */}
                         <div className="grid grid-cols-2 gap-2">
-                          <a href={`tel:${req.phone}`} className="bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-3 rounded-xl text-xs font-black uppercase flex items-center justify-center gap-1.5 active-press shadow-sm transition-colors">
+                          <a href={`tel:${req.phone}`} className="bg-sky-600 hover:bg-sky-500 text-white py-2.5 px-3 rounded-xl text-xs font-black uppercase flex items-center justify-center gap-1.5 active-press shadow-sm transition-all">
                             <Phone size={14}/> Ara
                           </a>
-                          <button onClick={() => handleApproveRequest(req, true)} className="bg-[#25D366] hover:bg-[#20b858] text-white py-2.5 px-3 rounded-xl text-xs font-black uppercase flex items-center justify-center gap-1.5 active-press shadow-sm transition-colors">
+                          <button onClick={() => handleApproveRequest(req, true)} className="bg-[#25D366] hover:bg-[#20b858] text-white py-2.5 px-3 rounded-xl text-xs font-black uppercase flex items-center justify-center gap-1.5 active-press shadow-[0_0_15px_rgba(37,211,102,0.3)] transition-all">
                             <MessageCircle size={15}/> WA Onay
                           </button>
                         </div>
                         {/* Masaya Al Onayla & Reddet */}
                         <div className="flex gap-2">
-                          <button onClick={() => handleApproveRequest(req, false)} className="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-colors shadow-sm flex items-center justify-center gap-1.5 border border-emerald-300 active-press">
+                          <button onClick={() => handleApproveRequest(req, false)} className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-1.5 active-press">
                             <Check size={15}/> Masaya Ekle
                           </button>
-                          <button onClick={() => handleRejectRequest(req.id)} className="bg-slate-200 hover:bg-red-500 text-slate-600 hover:text-white px-3.5 rounded-xl transition-colors active-press" title="Talebi Reddet / Sil">
+                          <button onClick={() => handleRejectRequest(req.id)} className="bg-white/5 hover:bg-red-500/80 text-slate-400 hover:text-white border border-white/10 px-3.5 rounded-xl transition-all active-press" title="Talebi Reddet / Sil">
                             <Trash2 size={15}/>
                           </button>
                         </div>
@@ -2784,61 +2900,68 @@ export default function App() {
             )}
           </div>
         ) : (activeAdminTab === 'restoran' || activeAdminTab === 'mac') ? (
+          /* RESTORAN & MAÇ PANELLERİ */
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 w-full col-span-12">
             <div className="lg:col-span-4 xl:col-span-3 space-y-6 print:hidden w-full">
-              <div className={`bg-white rounded-3xl shadow-sm border overflow-hidden transition-colors w-full ${activeAdminTab==='mac' ? (isMatchEditing?'border-blue-400':'border-slate-200') : (isEditing?'border-[#c2784f]':'border-slate-200')}`}>
-                <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-                  <h2 className="text-lg font-black text-slate-800">{activeAdminTab==='mac' ? (isMatchEditing?'Maç Düzelt':'Yeni Maç Kaydı') : (isEditing?'Kayıt Düzelt':'Yeni Rezervasyon')}</h2>
-                  {(isEditing || isMatchEditing) && <button type="button" onClick={()=>activeAdminTab==='mac'?cancelEdit(true):cancelEdit(false)} className="text-slate-400 hover:text-slate-600"><X size={20}/></button>}
+              <div className={`bg-[#14110e]/95 backdrop-blur-xl rounded-3xl border overflow-hidden transition-colors w-full shadow-2xl ${activeAdminTab==='mac' ? (isMatchEditing?'border-blue-400/60':'border-white/10') : (isEditing?'border-[#c2784f]':'border-white/10')}`}>
+                <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+                  <h2 className="text-base sm:text-lg font-serif font-light text-white">{activeAdminTab==='mac' ? (isMatchEditing?'Maç Düzelt':'Yeni Maç Kaydı') : (isEditing?'Kayıt Düzelt':'Yeni Rezervasyon')}</h2>
+                  {(isEditing || isMatchEditing) && <button type="button" onClick={()=>activeAdminTab==='mac'?cancelEdit(true):cancelEdit(false)} className="text-slate-400 hover:text-white p-1 rounded-lg"><X size={18}/></button>}
                 </div>
-                <form onSubmit={(e) => handleFormSubmit(e, activeAdminTab==='mac')} className="p-6 space-y-5 bg-slate-50/50">
+                <form onSubmit={(e) => handleFormSubmit(e, activeAdminTab==='mac')} className="p-6 space-y-4">
                   {activeAdminTab === 'restoran' && (
                     <div>
-                      <label className="block text-[10px] font-black text-slate-500 tracking-widest uppercase mb-2">Türü</label>
-                      <select name="type" value={formData.type} onChange={(e)=>setFormData({...formData, type: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold outline-none bg-white text-slate-800 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all"><option value="kahvalti">Kahvaltı</option><option value="yemek">Yemek</option><option value="dogum_gunu">Doğum Günü</option><option value="organizasyon">Organizasyon</option></select>
+                      <label className="block text-[10px] font-black text-[#c2784f] tracking-widest uppercase mb-1.5">Türü</label>
+                      <select name="type" value={formData.type} onChange={(e)=>setFormData({...formData, type: e.target.value})} className="w-full p-3 rounded-xl border border-white/10 bg-white/5 text-white font-bold outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all text-sm [color-scheme:dark]"><option value="kahvalti" className="bg-[#14110e]">Kahvaltı</option><option value="yemek" className="bg-[#14110e]">Yemek</option><option value="dogum_gunu" className="bg-[#14110e]">Doğum Günü</option><option value="organizasyon" className="bg-[#14110e]">Organizasyon</option></select>
                     </div>
                   )}
-                  <div><label className="block text-[10px] font-black text-slate-500 tracking-widest uppercase mb-2">İsim</label><input type="text" name="name" value={activeAdminTab==='mac'?matchFormData.name:formData.name} onChange={(e)=>activeAdminTab==='mac'?setMatchFormData({...matchFormData, name:e.target.value}):setFormData({...formData, name:e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold bg-white text-slate-800 outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all" required /></div>
-                  <div><label className="block text-[10px] font-black text-slate-500 tracking-widest uppercase mb-2">Telefon</label><input type="tel" name="phone" value={activeAdminTab==='mac'?matchFormData.phone:formData.phone} onChange={(e)=>activeAdminTab==='mac'?setMatchFormData({...matchFormData, phone:e.target.value}):setFormData({...formData, phone:e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold bg-white text-slate-800 outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all" /></div>
+                  <div><label className="block text-[10px] font-black text-[#c2784f] tracking-widest uppercase mb-1.5">İsim</label><input type="text" name="name" value={activeAdminTab==='mac'?matchFormData.name:formData.name} onChange={(e)=>activeAdminTab==='mac'?setMatchFormData({...matchFormData, name:e.target.value}):setFormData({...formData, name:e.target.value})} className="w-full p-3 rounded-xl border border-white/10 bg-white/5 text-white font-bold outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all text-sm placeholder-slate-600" required placeholder="Müşteri Adı" /></div>
+                  <div><label className="block text-[10px] font-black text-[#c2784f] tracking-widest uppercase mb-1.5">Telefon</label><input type="tel" name="phone" value={activeAdminTab==='mac'?matchFormData.phone:formData.phone} onChange={(e)=>activeAdminTab==='mac'?setMatchFormData({...matchFormData, phone:e.target.value}):setFormData({...formData, phone:e.target.value})} className="w-full p-3 rounded-xl border border-white/10 bg-white/5 text-white font-bold outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all text-sm placeholder-slate-600" placeholder="05XX XXX XX XX" /></div>
                   <div className="flex gap-4">
-                    <div className="flex-[2]"><label className="block text-[10px] font-black text-slate-500 tracking-widest uppercase mb-2">Masa</label><input type="text" name="table" value={activeAdminTab==='mac'?matchFormData.table:formData.table} onChange={(e)=>activeAdminTab==='mac'?setMatchFormData({...matchFormData, table:e.target.value}):setFormData({...formData, table:e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold uppercase bg-white text-slate-800 outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all" /></div>
-                    <div className="flex-[1]"><label className="block text-[10px] font-black text-slate-500 tracking-widest uppercase mb-2">Kişi</label><input type="number" name="peopleCount" min="1" value={activeAdminTab==='mac'?matchFormData.peopleCount:formData.peopleCount} onChange={(e)=>activeAdminTab==='mac'?setMatchFormData({...matchFormData, peopleCount:parseInt(e.target.value)||1}):setFormData({...formData, peopleCount:parseInt(e.target.value)||1})} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold text-center bg-white text-slate-800 outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all" /></div>
+                    <div className="flex-[2]"><label className="block text-[10px] font-black text-[#c2784f] tracking-widest uppercase mb-1.5">Masa</label><input type="text" name="table" value={activeAdminTab==='mac'?matchFormData.table:formData.table} onChange={(e)=>activeAdminTab==='mac'?setMatchFormData({...matchFormData, table:e.target.value}):setFormData({...formData, table:e.target.value})} className="w-full p-3 rounded-xl border border-white/10 bg-white/5 text-white font-bold uppercase outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all text-sm placeholder-slate-600" placeholder="Örn: B1" /></div>
+                    <div className="flex-[1]"><label className="block text-[10px] font-black text-[#c2784f] tracking-widest uppercase mb-1.5">Kişi</label><input type="number" name="peopleCount" min="1" value={activeAdminTab==='mac'?matchFormData.peopleCount:formData.peopleCount} onChange={(e)=>activeAdminTab==='mac'?setMatchFormData({...matchFormData, peopleCount:parseInt(e.target.value)||1}):setFormData({...formData, peopleCount:parseInt(e.target.value)||1})} className="w-full p-3 rounded-xl border border-white/10 bg-white/5 text-white font-bold text-center outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all text-sm" /></div>
                   </div>
-                  <div><label className="block text-[10px] font-black text-slate-500 tracking-widest uppercase mb-2">Tarih</label><input type="date" name="date" value={activeAdminTab==='mac'?matchFormData.date:formData.date} onChange={(e)=>activeAdminTab==='mac'?setMatchFormData({...matchFormData, date:e.target.value}):setFormData({...formData, date:e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold bg-white text-slate-800 outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all" required /></div>
-                  <div><label className="block text-[10px] font-black text-slate-500 tracking-widest uppercase mb-2">Not</label><textarea name="notes" value={activeAdminTab==='mac'?matchFormData.notes:formData.notes} onChange={(e)=>activeAdminTab==='mac'?setMatchFormData({...matchFormData, notes:e.target.value}):setFormData({...formData, notes:e.target.value})} rows="2" className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-medium resize-none bg-white text-slate-800 outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all"></textarea></div>
-                  <button type="submit" className={`w-full text-white font-black py-4 rounded-xl shadow-lg hover:-translate-y-1 transition-transform tracking-widest uppercase ${activeAdminTab==='mac' ? 'bg-blue-600' : 'bg-[#c2784f]'}`}>{activeAdminTab==='mac'?(isMatchEditing?'GÜNCELLE':'EKLE'):(isEditing?'GÜNCELLE':'EKLE')}</button>
+                  <div><label className="block text-[10px] font-black text-[#c2784f] tracking-widest uppercase mb-1.5">Tarih</label><input type="date" name="date" value={activeAdminTab==='mac'?matchFormData.date:formData.date} onChange={(e)=>activeAdminTab==='mac'?setMatchFormData({...matchFormData, date:e.target.value}):setFormData({...formData, date:e.target.value})} className="w-full p-3 rounded-xl border border-white/10 bg-white/5 text-white font-bold outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all text-sm [color-scheme:dark]" required /></div>
+                  <div><label className="block text-[10px] font-black text-[#c2784f] tracking-widest uppercase mb-1.5">Not</label><textarea name="notes" value={activeAdminTab==='mac'?matchFormData.notes:formData.notes} onChange={(e)=>activeAdminTab==='mac'?setMatchFormData({...matchFormData, notes:e.target.value}):setFormData({...formData, notes:e.target.value})} rows="2" className="w-full p-3 rounded-xl border border-white/10 bg-white/5 text-white font-medium resize-none outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all text-xs placeholder-slate-600" placeholder="Özel notlar..."></textarea></div>
+                  <button type="submit" className={`w-full text-white font-black py-4 rounded-xl shadow-lg transition-transform hover:-translate-y-0.5 tracking-widest uppercase text-xs active-press ${activeAdminTab==='mac' ? 'bg-gradient-to-r from-blue-600 to-indigo-600' : 'btn-premium'}`}>{activeAdminTab==='mac'?(isMatchEditing?'GÜNCELLE':'EKLE'):(isEditing?'GÜNCELLE':'EKLE')}</button>
                 </form>
               </div>
             </div>
 
             <div className="lg:col-span-8 xl:col-span-9 space-y-6 print:w-full print:block w-full">
-              <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-8 min-h-[500px] w-full">
-                <div className="flex flex-col md:flex-row items-center justify-between mb-8 pb-4 border-b border-slate-100 gap-4">
-                  <h2 className="text-2xl font-black text-slate-800 tracking-wide">{activeAdminTab==='mac' ? 'Maç Rezervasyonları' : 'Aktif Masalar'}</h2>
-                  <div className="flex items-center gap-3 w-full md:w-auto">
-                    <input type="text" placeholder="Ara..." value={activeAdminTab==='mac'?matchSearchTerm:searchTerm} onChange={(e)=>activeAdminTab==='mac'?setMatchSearchTerm(e.target.value):setSearchTerm(e.target.value)} className="p-2 border border-slate-200 shadow-sm rounded-xl outline-none font-medium w-full md:w-48 bg-slate-50 text-slate-800 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all" />
-                    <span className="font-black text-xs text-slate-500 bg-slate-100 px-4 py-2.5 rounded-xl whitespace-nowrap uppercase tracking-widest border border-slate-200">{(activeAdminTab==='mac'?sortedMatchReservations:sortedReservations).length} Kayıt</span>
-                    <button onClick={()=>window.print()} className="bg-white border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-50 p-2.5 rounded-xl shadow-sm transition-all"><Printer size={20}/></button>
+              <div className="bg-[#14110e]/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-5 sm:p-8 min-h-[500px] w-full">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-4 border-b border-white/10 gap-4">
+                  <h2 className="text-xl sm:text-2xl font-serif font-light text-white tracking-wide">{activeAdminTab==='mac' ? 'Maç Rezervasyonları' : 'Aktif Masalar'}</h2>
+                  <div className="flex items-center gap-2.5 w-full md:w-auto">
+                    <input type="text" placeholder="Ara..." value={activeAdminTab==='mac'?matchSearchTerm:searchTerm} onChange={(e)=>activeAdminTab==='mac'?setMatchSearchTerm(e.target.value):setSearchTerm(e.target.value)} className="p-2.5 border border-white/10 shadow-sm rounded-xl outline-none font-medium w-full md:w-48 bg-white/5 text-white placeholder-slate-500 focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all text-xs" />
+                    <span className="font-black text-xs text-slate-300 bg-white/5 px-3.5 py-2.5 rounded-xl whitespace-nowrap uppercase tracking-widest border border-white/10 shrink-0">{(activeAdminTab==='mac'?sortedMatchReservations:sortedReservations).length} Kayıt</span>
+                    <button onClick={()=>window.print()} className="bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 p-2.5 rounded-xl shadow-sm transition-all shrink-0 active-press" title="Yazdır"><Printer size={18}/></button>
                   </div>
                 </div>
 
                 {(activeAdminTab==='mac'?sortedMatchReservations:sortedReservations).length === 0 ? (
-                  <div className="p-16 text-center text-slate-400 flex flex-col items-center"><Inbox size={48} className="mb-4 opacity-30 text-slate-400" /><p className="font-light font-serif text-2xl tracking-wide">Kayıt bulunamadı.</p></div>
+                  <div className="p-16 text-center text-slate-400 flex flex-col items-center"><Inbox size={48} className="mb-4 opacity-30 text-[#c2784f]" /><p className="font-serif font-light text-2xl text-white tracking-wide">Kayıt bulunamadı.</p></div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {(activeAdminTab==='mac'?sortedMatchReservations:sortedReservations).map(res => (
-                      <div key={res.id} className={`bg-white border p-6 rounded-2xl flex flex-col relative shadow-sm hover:shadow-md transition-shadow group ${res.isArrived ? 'border-emerald-500 opacity-80' : 'border-slate-200 hover:border-[#c2784f]/50'}`}>
+                      <div key={res.id} className={`bg-[#1a1613] border p-5 sm:p-6 rounded-2xl flex flex-col relative shadow-md hover:shadow-xl transition-all group ${res.isArrived ? 'border-emerald-500/50 bg-[#142319]/40' : 'border-white/10 hover:border-[#c2784f]/50'}`}>
                          <div className="flex justify-between items-start mb-4">
-                           <div><h3 className="font-bold text-lg text-slate-800 leading-none mb-1 group-hover:text-[#c2784f] transition-colors">{res.name}</h3><p className="text-xs font-bold text-slate-400 tracking-widest">{res.phone}</p></div>
-                           <div className="text-right"><div className="bg-[#c2784f]/10 text-[#c2784f] border border-[#c2784f]/20 font-black px-3 py-1.5 rounded-lg text-sm shadow-sm">{res.table}</div><div className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mt-2">{res.peopleCount} Kişi</div></div>
+                           <div>
+                             <h3 className="font-serif font-bold text-lg text-white leading-none mb-1 group-hover:text-[#c2784f] transition-colors">{res.name}</h3>
+                             <p className="text-xs font-mono font-bold text-slate-400 tracking-wider mt-1">{res.phone}</p>
+                           </div>
+                           <div className="text-right">
+                             <div className="bg-[#c2784f]/15 text-[#e09f7a] border border-[#c2784f]/30 font-black px-3 py-1 rounded-xl text-sm shadow-sm">{res.table}</div>
+                             <div className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mt-1.5">{res.peopleCount} Kişi</div>
+                           </div>
                          </div>
-                         {res.notes && <p className="text-[11px] font-medium text-slate-600 bg-slate-50 border border-slate-100 p-3 rounded-xl mb-4 italic leading-relaxed">Not: {res.notes}</p>}
-                         <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-                           <button onClick={()=>handleToggleArrived(res.id, res.isArrived, activeAdminTab==='mac'?'matchReservations':'reservations')} className={`text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-xl shadow-sm transition-colors ${res.isArrived ? 'bg-emerald-500 text-white' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'}`}>{res.isArrived ? 'MASADA' : 'GELMEDİ'}</button>
+                         {res.notes && <p className="text-[11px] font-medium text-slate-300 bg-white/5 border border-white/5 p-3 rounded-xl mb-4 italic leading-relaxed">Not: {res.notes}</p>}
+                         <div className="mt-auto pt-4 border-t border-white/10 flex items-center justify-between">
+                           <button onClick={()=>handleToggleArrived(res.id, res.isArrived, activeAdminTab==='mac'?'matchReservations':'reservations')} className={`text-[10px] font-black uppercase tracking-[0.2em] px-3.5 py-2 rounded-xl shadow-sm transition-all active-press ${res.isArrived ? 'bg-emerald-500 text-white shadow-emerald-500/30 shadow-md' : 'bg-white/5 border border-white/10 text-slate-400 hover:text-white'}`}>{res.isArrived ? 'MASADA' : 'GELMEDİ'}</button>
                            <div className="flex gap-2">
-                             <button onClick={()=>sendWhatsApp(res, activeAdminTab, false)} className="text-[#25D366] bg-[#25D366]/10 border border-[#25D366]/20 p-2 rounded-xl hover:bg-[#25D366] hover:text-white transition-colors shadow-sm"><MessageCircle size={16}/></button>
-                             <button onClick={()=>handleEditClick(res, activeAdminTab==='mac')} className="text-[#c2784f] bg-[#c2784f]/10 border border-[#c2784f]/20 p-2 rounded-xl hover:bg-[#c2784f] hover:text-white transition-colors shadow-sm"><Edit2 size={16}/></button>
-                             <button onClick={()=>executeDelete(res.id, activeAdminTab==='mac'?'matchReservations':'reservations')} className="text-red-500 bg-red-50 border border-red-100 p-2 rounded-xl hover:bg-red-500 hover:text-white transition-colors shadow-sm"><Trash2 size={16}/></button>
+                             <button onClick={()=>sendWhatsApp(res, activeAdminTab, false)} className="text-[#25D366] bg-[#25D366]/10 border border-[#25D366]/20 p-2 rounded-xl hover:bg-[#25D366] hover:text-white transition-all shadow-sm active-press" title="WhatsApp Mesajı"><MessageCircle size={16}/></button>
+                             <button onClick={()=>handleEditClick(res, activeAdminTab==='mac')} className="text-[#c2784f] bg-[#c2784f]/10 border border-[#c2784f]/20 p-2 rounded-xl hover:bg-[#c2784f] hover:text-white transition-all shadow-sm active-press" title="Düzenle"><Edit2 size={16}/></button>
+                             <button onClick={()=>executeDelete(res.id, activeAdminTab==='mac'?'matchReservations':'reservations')} className="text-red-400 bg-red-500/10 border border-red-500/20 p-2 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm active-press" title="Sil"><Trash2 size={16}/></button>
                            </div>
                          </div>
                       </div>
@@ -2849,165 +2972,158 @@ export default function App() {
             </div>
           </div>
         ) : activeAdminTab === 'menu' ? (
+          /* MENÜ YÖNETİMİ */
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 w-full col-span-12">
             <div className="lg:col-span-4 xl:col-span-3 space-y-6 w-full">
               {menuItems.length === 0 && (
-                <div className="bg-orange-100 border border-orange-200 rounded-3xl p-6 text-center shadow-sm">
-                  <p className="text-orange-800 font-bold mb-4 text-sm">Sisteminizde hiç menü öğesi yok.</p>
-                  <button type="button" onClick={() => setShowImportConfirm(true)} className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-xl font-black uppercase text-xs w-full transition-colors">Varsayılan Menüyü Aktar</button>
+                <div className="bg-[#c2784f]/15 border border-[#c2784f]/30 rounded-3xl p-6 text-center shadow-sm">
+                  <p className="text-[#f0cfbb] font-bold mb-4 text-sm">Sisteminizde hiç menü öğesi yok.</p>
+                  <button type="button" onClick={() => setShowImportConfirm(true)} className="btn-premium text-white px-5 py-3 rounded-xl font-black uppercase text-xs w-full transition-all">Varsayılan Menüyü Aktar</button>
                 </div>
               )}
-              <div className={`bg-white rounded-3xl shadow-sm border overflow-hidden transition-colors w-full ${isMenuEditing ? 'border-[#c2784f]' : 'border-slate-200'}`}>
-                <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+              <div className={`bg-[#14110e]/95 backdrop-blur-xl rounded-3xl shadow-2xl border overflow-hidden transition-colors w-full ${isMenuEditing ? 'border-[#c2784f]' : 'border-white/10'}`}>
+                <div className="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-white/[0.02]">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-xl ${isMenuEditing ? 'bg-[#c2784f]/10 text-[#c2784f]' : 'bg-slate-100 text-slate-500'}`}>{isMenuEditing ? <Edit2 size={20} /> : <Plus size={20} />}</div>
-                    <h2 className="font-black text-lg text-slate-800">{isMenuEditing ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle'}</h2>
+                    <div className={`p-2 rounded-xl ${isMenuEditing ? 'bg-[#c2784f]/20 text-[#e09f7a]' : 'bg-white/5 text-slate-400'}`}>{isMenuEditing ? <Edit2 size={18} /> : <Plus size={18} />}</div>
+                    <h2 className="font-serif font-light text-base sm:text-lg text-white">{isMenuEditing ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle'}</h2>
                   </div>
-                  {isMenuEditing && <button type="button" onClick={()=>{setIsMenuEditing(null); setMenuItemData(initialMenuItemState); setMenuErrorMsg('');}} className="text-slate-400 p-1.5 hover:bg-slate-100 rounded-full transition-colors"><X size={18}/></button>}
+                  {isMenuEditing && <button type="button" onClick={()=>{setIsMenuEditing(null); setMenuItemData(initialMenuItemState); setMenuErrorMsg('');}} className="text-slate-400 p-1.5 hover:bg-white/10 rounded-full transition-colors"><X size={18}/></button>}
                 </div>
-                <form onSubmit={handleMenuSubmit} className="p-6 space-y-5 bg-slate-50/50">
-                  {menuErrorMsg && <div className="text-red-500 font-bold text-sm bg-red-50 p-3 rounded-xl flex items-center gap-2 border border-red-100"><X size={16}/> {menuErrorMsg}</div>}
+                <form onSubmit={handleMenuSubmit} className="p-6 space-y-4">
+                  {menuErrorMsg && <div className="text-red-400 font-bold text-xs bg-red-500/10 p-3 rounded-xl flex items-center gap-2 border border-red-500/20"><X size={16}/> {menuErrorMsg}</div>}
                   
                   <div className="flex items-center justify-between">
-                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Kategori</label>
-                    <button type="button" onClick={(e) => { e.preventDefault(); setShowCategoryModal(true); }} className="text-[10px] bg-[#c2784f]/10 text-[#c2784f] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg hover:bg-[#c2784f]/20 transition-colors shadow-sm border border-[#c2784f]/20">+ Yeni</button>
+                    <label className="block text-[10px] font-black text-[#c2784f] uppercase tracking-widest">Kategori</label>
+                    <button type="button" onClick={(e) => { e.preventDefault(); setShowCategoryModal(true); }} className="text-[10px] bg-[#c2784f]/15 text-[#e09f7a] font-black uppercase tracking-widest px-3 py-1 rounded-lg hover:bg-[#c2784f]/25 transition-all shadow-sm border border-[#c2784f]/30 active-press">+ Yeni</button>
                   </div>
-                  <select name="category" value={menuItemData.category} onChange={handleMenuChange} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] bg-white text-slate-800 transition-all">
-                    {ALL_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  <select name="category" value={menuItemData.category} onChange={handleMenuChange} className="w-full p-3 rounded-xl border border-white/10 shadow-sm font-bold outline-none focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] bg-white/5 text-white transition-all text-sm [color-scheme:dark]">
+                    {ALL_CATEGORIES.map(c => <option key={c.id} value={c.id} className="bg-[#14110e]">{c.name}</option>)}
                   </select>
                   
                   <div>
-                    <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Ürün Adı *</label>
-                    <input type="text" name="name" value={menuItemData.name} onChange={handleMenuChange} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white text-slate-800 transition-all" required placeholder="Örn: Karışık Tost" />
+                    <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Ürün Adı *</label>
+                    <input type="text" name="name" value={menuItemData.name} onChange={handleMenuChange} className="w-full p-3 rounded-xl border border-white/10 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 text-white placeholder-slate-600 transition-all text-sm" required placeholder="Örn: Karışık Tost" />
                   </div>
                   
-                  <div className="flex gap-4">
+                  <div className="flex gap-3">
                      <div className="flex-1">
-                        <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Fiyat</label>
+                        <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Fiyat</label>
                         <div className="relative">
-                          <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                          <input type="text" name="price" value={menuItemData.price} onChange={handleMenuChange} className="w-full pl-9 pr-3 py-3 rounded-xl border border-slate-200 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white text-slate-800 transition-all" placeholder="150" />
+                          <DollarSign size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                          <input type="text" name="price" value={menuItemData.price} onChange={handleMenuChange} className="w-full pl-8 pr-3 py-2.5 rounded-xl border border-white/10 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 text-white placeholder-slate-600 transition-all text-sm" placeholder="150" />
                         </div>
                      </div>
                      <div className="flex-1">
-                        <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Hazırlama</label>
+                        <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Hazırlama</label>
                         <div className="relative">
-                          <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                          <input type="text" name="prepTime" value={menuItemData.prepTime} onChange={handleMenuChange} className="w-full pl-9 pr-3 py-3 rounded-xl border border-slate-200 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white text-slate-800 transition-all" placeholder="15 dk" />
+                          <Clock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                          <input type="text" name="prepTime" value={menuItemData.prepTime} onChange={handleMenuChange} className="w-full pl-8 pr-3 py-2.5 rounded-xl border border-white/10 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 text-white placeholder-slate-600 transition-all text-sm" placeholder="15 dk" />
                         </div>
                      </div>
                      <div className="flex-1">
-                        <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Kalori</label>
+                        <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Kalori</label>
                         <div className="relative">
-                          <Flame size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                          <input type="text" name="calories" value={menuItemData.calories} onChange={handleMenuChange} className="w-full pl-9 pr-3 py-3 rounded-xl border border-slate-200 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white text-slate-800 transition-all" placeholder="350 kcal" />
+                          <Flame size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                          <input type="text" name="calories" value={menuItemData.calories} onChange={handleMenuChange} className="w-full pl-8 pr-3 py-2.5 rounded-xl border border-white/10 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 text-white placeholder-slate-600 transition-all text-sm" placeholder="350 kcal" />
                         </div>
                      </div>
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Durum & Etiket (Maks: 2)</label>
+                    <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Durum & Etiket (Maks: 2)</label>
                     <div className="flex flex-wrap gap-2">
                       {BADGE_OPTIONS.map(badge => (
-                        <label key={badge.id} className="flex items-center gap-2 cursor-pointer bg-white border border-slate-200 px-3 py-2 rounded-xl shadow-sm hover:bg-slate-50 transition-colors">
-                          <input type="checkbox" checked={menuItemData.badges.includes(badge.id)} onChange={() => handleBadgeChange(badge.id)} className="w-3.5 h-3.5 text-[#c2784f] rounded border-slate-300 focus:ring-[#c2784f]" />
-                          <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5"><span>{badge.icon}</span> {badge.label}</span>
+                        <label key={badge.id} className="flex items-center gap-2 cursor-pointer bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl shadow-sm hover:border-[#c2784f]/40 transition-colors">
+                          <input type="checkbox" checked={menuItemData.badges.includes(badge.id)} onChange={() => handleBadgeChange(badge.id)} className="w-3.5 h-3.5 accent-[#c2784f] rounded" />
+                          <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5"><span>{badge.icon}</span> {badge.label}</span>
                         </label>
                       ))}
                     </div>
                   </div>
                   
                   <div>
-                    <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Açıklama</label>
+                    <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Açıklama</label>
                     <div className="relative">
-                      <AlignLeft size={18} className="absolute left-3 top-4 text-slate-400" />
-                      <textarea name="description" value={menuItemData.description} onChange={handleMenuChange} rows={5} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 shadow-sm font-medium resize-y min-h-[120px] focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white text-slate-800 transition-all" placeholder="Örn İçerik: Beyaz peynir, Taze kaşar..."></textarea>
+                      <AlignLeft size={16} className="absolute left-3 top-3.5 text-slate-500" />
+                      <textarea name="description" value={menuItemData.description} onChange={handleMenuChange} rows={3} className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-white/10 shadow-sm font-medium resize-y focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 text-white placeholder-slate-600 transition-all text-xs" placeholder="Örn İçerik: Beyaz peynir, Taze kaşar..."></textarea>
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4 items-center">
+                  <div className="grid grid-cols-2 gap-3 items-center">
                     <div>
-                      <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Ürün Resim (Yükle)</label>
-                      <div className="flex items-center gap-2">
-                        <label className="flex items-center justify-center px-4 py-3 bg-white border border-slate-200 shadow-sm rounded-xl cursor-pointer hover:bg-slate-50 transition-colors text-xs font-bold text-slate-700 w-full text-center">
-                          {uploadingImage ? <Loader2 className="animate-spin mr-2" size={16} /> : <UploadCloud className="mr-2 text-[#c2784f]" size={16} />}
-                          Dosya Seç
-                          <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploadingImage} />
-                        </label>
-                      </div>
+                      <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Ürün Resim (Yükle)</label>
+                      <label className="flex items-center justify-center px-3 py-2.5 bg-white/5 border border-white/10 shadow-sm rounded-xl cursor-pointer hover:bg-white/10 transition-colors text-xs font-bold text-slate-300 w-full text-center">
+                        {uploadingImage ? <Loader2 className="animate-spin mr-2" size={15} /> : <UploadCloud className="mr-2 text-[#c2784f]" size={15} />}
+                        Dosya Seç
+                        <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploadingImage} />
+                      </label>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Sıra</label>
-                      <input type="number" name="order" value={menuItemData.order} onChange={handleMenuChange} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white text-slate-800 transition-all" placeholder="999" />
+                      <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Sıra</label>
+                      <input type="number" name="order" value={menuItemData.order} onChange={handleMenuChange} className="w-full p-2.5 rounded-xl border border-white/10 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 text-white transition-all text-sm" placeholder="999" />
                     </div>
                   </div>
                   
                   {menuItemData.image && (
-                     <div className="relative inline-block mt-2">
-                        <img src={menuItemData.image} alt="Preview" className="h-24 w-auto rounded-lg object-contain border border-slate-200 shadow-sm bg-slate-50" />
-                        <button type="button" onClick={removeMenuImage} className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-md transition-colors" title="Resmi Kaldır">
-                           <X size={14}/>
+                     <div className="relative inline-block mt-1">
+                        <img src={menuItemData.image} alt="Preview" className="h-20 w-auto rounded-lg object-contain border border-white/10 shadow-sm bg-black/40" />
+                        <button type="button" onClick={removeMenuImage} className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-md transition-colors" title="Resmi Kaldır">
+                           <X size={12}/>
                         </button>
                      </div>
                   )}
                   
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                     <label className="flex items-center gap-3 cursor-pointer bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-[#c2784f]/30 transition-all">
-                        <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${menuItemData.isFeatured ? 'bg-[#c2784f] border-[#c2784f] text-white shadow-sm' : 'bg-slate-50 border-slate-300'}`}>
-                           {menuItemData.isFeatured && <Check size={14} />}
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                     <label className="flex items-center gap-3 cursor-pointer bg-white/5 p-3 rounded-xl border border-white/10 shadow-sm hover:border-[#c2784f]/40 transition-all">
+                        <div className={`w-4 h-4 rounded flex items-center justify-center border transition-colors ${menuItemData.isFeatured ? 'bg-[#c2784f] border-[#c2784f] text-white shadow-sm' : 'bg-transparent border-white/20'}`}>
+                           {menuItemData.isFeatured && <Check size={12} />}
                         </div>
                         <input type="checkbox" checked={menuItemData.isFeatured} onChange={(e)=>setMenuItemData({...menuItemData, isFeatured: e.target.checked})} className="hidden" />
-                        <div className="flex-1 select-none">
-                           <span className="font-bold text-xs text-slate-700 block tracking-wide">Vitrin Göster</span>
-                        </div>
+                        <span className="font-bold text-xs text-slate-300 block select-none">Vitrin Göster</span>
                      </label>
-                     <label className="flex items-center gap-3 cursor-pointer bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-red-500/30 transition-all">
-                        <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${menuItemData.isSoldOut ? 'bg-red-500 border-red-500 text-white shadow-sm' : 'bg-slate-50 border-slate-300'}`}>
-                           {menuItemData.isSoldOut && <Check size={14} />}
+                     <label className="flex items-center gap-3 cursor-pointer bg-white/5 p-3 rounded-xl border border-white/10 shadow-sm hover:border-red-500/40 transition-all">
+                        <div className={`w-4 h-4 rounded flex items-center justify-center border transition-colors ${menuItemData.isSoldOut ? 'bg-red-500 border-red-500 text-white shadow-sm' : 'bg-transparent border-white/20'}`}>
+                           {menuItemData.isSoldOut && <Check size={12} />}
                         </div>
                         <input type="checkbox" checked={menuItemData.isSoldOut} onChange={(e)=>setMenuItemData({...menuItemData, isSoldOut: e.target.checked})} className="hidden" />
-                        <div className="flex-1 select-none">
-                           <span className="font-bold text-xs text-slate-700 block tracking-wide">Tükendi Yap</span>
-                        </div>
+                        <span className="font-bold text-xs text-slate-300 block select-none">Tükendi Yap</span>
                      </label>
                   </div>
                   
-                  <button type="submit" className="w-full bg-[#c2784f] hover:bg-[#a16241] text-white font-black py-4 rounded-xl shadow-lg transition-transform hover:-translate-y-1 uppercase tracking-widest mt-4">
+                  <button type="submit" className="w-full btn-premium text-white font-black py-3.5 rounded-xl shadow-lg transition-transform hover:-translate-y-0.5 uppercase tracking-widest text-xs mt-3 active-press">
                     {isMenuEditing ? 'Değişiklikleri Kaydet' : 'Ürünü Ekle'}
                   </button>
 
-                  {/* CANLI ÖNİZLEME ALANI */}
-                  <div className="mt-6 border-t border-slate-200 pt-6">
-                     <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2"><MonitorPlay size={14}/> Menü Görünümü (Önizleme)</h3>
-                     <div className="bg-white border border-slate-200 rounded-[24px] overflow-hidden shadow-lg flex flex-col min-h-[200px] max-w-sm mx-auto relative pointer-events-none">
+                  {/* CANLI ÖNİZLEME ALANI (Müşteri Vitrini Stili) */}
+                  <div className="mt-6 border-t border-white/10 pt-5">
+                     <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2"><MonitorPlay size={14} className="text-[#c2784f]"/> Menü Önizlemesi</h3>
+                     <div className="bg-[#12100e] border border-white/10 rounded-2xl overflow-hidden shadow-xl flex flex-col min-h-[180px] max-w-sm mx-auto relative pointer-events-none">
                         {menuItemData.badges && menuItemData.badges.length > 0 && (
-                          <div className="absolute top-3 left-3 z-10 flex gap-1">
+                          <div className="absolute top-2.5 left-2.5 z-10 flex gap-1">
                             {menuItemData.badges.map(b => {
                                const def = BADGE_OPTIONS.find(o=>o.id===b);
-                               return def ? <span key={b} className="bg-white/95 text-slate-800 text-[10px] font-bold px-2 py-1 rounded-md shadow-sm border border-slate-100">{def.icon}</span> : null;
+                               return def ? <span key={b} className="bg-black/80 backdrop-blur-md text-[#e09f7a] text-[9px] font-bold px-2 py-0.5 rounded border border-white/10">{def.icon}</span> : null;
                             })}
                           </div>
                         )}
-                        {menuItemData.isSoldOut && <div className="absolute top-3 right-3 z-10 bg-red-600 text-white text-[10px] font-black px-2.5 py-1 rounded-md shadow-sm uppercase tracking-widest">Tükendi</div>}
+                        {menuItemData.isSoldOut && <div className="absolute top-2.5 right-2.5 z-10 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm uppercase tracking-widest">Tükendi</div>}
                         
                         {menuItemData.image ? (
-                          <div className="relative w-full h-40 bg-slate-100 flex items-center justify-center overflow-hidden shrink-0 border-b border-slate-100">
+                          <div className="relative w-full h-36 bg-black/40 flex items-center justify-center overflow-hidden shrink-0 border-b border-white/5">
                             <img src={menuItemData.image} alt={menuItemData.name} className={`w-full h-full object-contain p-2 ${menuItemData.isSoldOut ? 'opacity-40 grayscale' : ''}`} />
                           </div>
                         ) : (
-                          <div className={`relative w-full h-24 bg-slate-50 flex flex-col items-center justify-center border-b border-slate-100 shrink-0 ${menuItemData.isSoldOut ? 'opacity-40 grayscale' : ''}`}>
-                            <ImageIcon size={32} className="text-slate-300"/>
+                          <div className={`relative w-full h-20 bg-white/5 flex flex-col items-center justify-center border-b border-white/5 shrink-0 ${menuItemData.isSoldOut ? 'opacity-40 grayscale' : ''}`}>
+                            <ImageIcon size={28} className="text-slate-600"/>
                           </div>
                         )}
                         
-                        <div className={`p-5 flex flex-col justify-between bg-white grow ${menuItemData.isSoldOut ? 'opacity-60 grayscale' : ''}`}>
-                           <div>
-                             <div className="flex justify-between items-start gap-4 mb-2">
-                                <span className={`font-bold text-sm sm:text-base tracking-wide leading-snug ${menuItemData.isSoldOut ? 'text-slate-400 line-through' : 'text-slate-800'}`}>{menuItemData.name || 'Örnek Ürün Adı'}</span>
-                                {menuItemData.price && <span className="text-orange-500 font-black whitespace-nowrap text-sm sm:text-base">{menuItemData.price} TL</span>}
-                             </div>
-                             {menuItemData.description && <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed">{menuItemData.description}</p>}
+                        <div className={`p-4 flex flex-col justify-between grow ${menuItemData.isSoldOut ? 'opacity-60 grayscale' : ''}`}>
+                           <div className="flex justify-between items-start gap-3">
+                              <span className={`font-serif font-light text-sm tracking-wide ${menuItemData.isSoldOut ? 'text-slate-500 line-through' : 'text-white'}`}>{menuItemData.name || 'Örnek Ürün Adı'}</span>
+                              {menuItemData.price && <span className="text-[#c2784f] font-serif font-bold whitespace-nowrap text-sm">{menuItemData.price} TL</span>}
                            </div>
+                           {menuItemData.description && <p className="text-slate-400 text-xs line-clamp-2 mt-1 leading-relaxed">{menuItemData.description}</p>}
                         </div>
                      </div>
                   </div>
@@ -3017,74 +3133,73 @@ export default function App() {
             </div>
 
             <div className="lg:col-span-8 xl:col-span-9 w-full">
-               <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-8 min-h-[500px] w-full">
-                  <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-8 pb-4 border-b border-slate-100 gap-4">
-                     <h2 className="text-2xl font-black flex items-center gap-3 text-slate-800 tracking-wide"><MenuSquare className="text-[#c2784f]" size={28} /> Sistemdeki Menü Öğeleri</h2>
+               <div className="bg-[#14110e]/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-5 sm:p-8 min-h-[500px] w-full">
+                  <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-8 pb-4 border-b border-white/10 gap-4">
+                     <h2 className="text-xl sm:text-2xl font-serif font-light flex items-center gap-3 text-white tracking-wide"><MenuSquare className="text-[#c2784f]" size={26} /> Menü Öğeleri</h2>
                      
                      <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
-                        <select value={menuFilterCategory} onChange={(e) => setMenuFilterCategory(e.target.value)} className="w-full sm:w-auto p-2.5 border border-slate-200 shadow-sm rounded-xl outline-none font-bold text-sm focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] bg-slate-50 text-slate-800 transition-all">
-                           <option value="all">Tüm Kategoriler</option>
-                           {ALL_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                        <select value={menuFilterCategory} onChange={(e) => setMenuFilterCategory(e.target.value)} className="w-full sm:w-auto p-2.5 border border-white/10 shadow-sm rounded-xl outline-none font-bold text-xs focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] bg-white/5 text-white transition-all [color-scheme:dark]">
+                           <option value="all" className="bg-[#14110e]">Tüm Kategoriler</option>
+                           {ALL_CATEGORIES.map(c => <option key={c.id} value={c.id} className="bg-[#14110e]">{c.name}</option>)}
                         </select>
                         <div className="relative w-full sm:w-64">
-                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                           <input type="text" placeholder="Ürün ara..." value={menuSearchTerm} onChange={(e) => setMenuSearchTerm(e.target.value)} className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 shadow-sm focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] text-sm font-medium outline-none transition-all bg-slate-50 text-slate-800" />
+                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={15} />
+                           <input type="text" placeholder="Ürün ara..." value={menuSearchTerm} onChange={(e) => setMenuSearchTerm(e.target.value)} className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-white/10 shadow-sm focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] text-xs font-medium outline-none transition-all bg-white/5 text-white placeholder-slate-500" />
                         </div>
-                        <span className="font-black text-xs text-slate-500 bg-slate-100 px-4 py-2.5 rounded-xl whitespace-nowrap uppercase tracking-widest border border-slate-200 shrink-0">{menuItems.length} Öğe</span>
+                        <span className="font-black text-xs text-slate-300 bg-white/5 px-3.5 py-2.5 rounded-xl whitespace-nowrap uppercase tracking-widest border border-white/10 shrink-0">{menuItems.length} Öğe</span>
                      </div>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                      {menuItems
                        .filter(m => menuFilterCategory === 'all' || m.category === menuFilterCategory)
                        .filter(m => !menuSearchTerm || m.name.toLowerCase().includes(menuSearchTerm.toLowerCase()) || m.category.toLowerCase().includes(menuSearchTerm.toLowerCase()))
                        .sort((a,b) => (a.order||999) - (b.order||999) || a.name.localeCompare(b.name))
                        .map((item) => (
-                       
                        <div 
                           key={item.id} 
                           draggable
                           onDragStart={(e) => handleDragStart(e, item)}
                           onDragOver={handleDragOver}
                           onDrop={(e) => handleDrop(e, item)}
-                          className={`border p-5 rounded-2xl flex flex-col bg-white ${isMenuEditing===item.id ? 'border-[#c2784f] shadow-lg scale-[1.02] transition-all relative z-10' : 'border-slate-200 hover:border-[#c2784f]/50 hover:shadow-md transition-all cursor-move shadow-sm group'}`}
+                          className={`border p-5 rounded-2xl flex flex-col bg-[#1a1613] ${isMenuEditing===item.id ? 'border-[#c2784f] shadow-[0_0_25px_rgba(194,120,79,0.3)] scale-[1.02] transition-all relative z-10' : 'border-white/10 hover:border-[#c2784f]/50 hover:shadow-lg transition-all cursor-move group'}`}
                        >
                           <div className="flex justify-between items-start mb-3">
-                             <span className="text-[9px] font-black uppercase tracking-[0.2em] bg-[#c2784f]/10 text-[#c2784f] border border-[#c2784f]/20 px-3 py-1 rounded flex items-center gap-1.5 shadow-sm">
-                               <GripVertical size={12} className="text-[#c2784f]/50"/>
+                             <span className="text-[9px] font-black uppercase tracking-[0.2em] bg-[#c2784f]/15 text-[#e09f7a] border border-[#c2784f]/30 px-2.5 py-1 rounded flex items-center gap-1.5 shadow-sm">
+                               <GripVertical size={12} className="text-[#c2784f]/60"/>
                                {ALL_CATEGORIES.find(c=>c.id===item.category)?.name || item.category}
                              </span>
-                             {item.isSoldOut && <span className="bg-red-50 text-red-600 border border-red-200 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded shadow-sm">Tükendi</span>}
+                             {item.isSoldOut && <span className="bg-red-500/20 text-red-400 border border-red-500/30 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded shadow-sm">Tükendi</span>}
                           </div>
 
-                          <div className="flex gap-4 items-center mb-4">
+                          <div className="flex gap-3.5 items-center mb-4">
                             {item.image ? (
-                               <div className="w-16 h-16 rounded-xl bg-slate-50 shrink-0 flex items-center justify-center p-1 border border-slate-100 shadow-sm">
+                               <div className="w-16 h-16 rounded-xl bg-black/40 shrink-0 flex items-center justify-center p-1 border border-white/10 shadow-sm">
                                  <img src={item.image} className={`w-full h-full object-contain ${item.isSoldOut ? 'opacity-40 grayscale' : ''}`} alt="" onError={(e)=>{e.currentTarget.style.display='none'}} />
                                </div>
                             ) : (
-                               <div className="w-16 h-16 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 shrink-0 shadow-sm border border-slate-100"><ImageIcon size={24}/></div>
+                               <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center text-slate-500 shrink-0 shadow-sm border border-white/10"><ImageIcon size={22}/></div>
                             )}
                             <div>
-                              <h3 className={`font-bold leading-tight line-clamp-2 transition-colors group-hover:text-[#c2784f] ${item.isSoldOut ? 'text-slate-400 line-through' : 'text-slate-800'}`}>{item.name}</h3>
-                              <span className="font-black text-[#c2784f] text-sm block mt-1">{item.price ? `${item.price} TL` : '-'}</span>
+                              <h3 className={`font-serif font-light text-base leading-tight line-clamp-2 transition-colors group-hover:text-[#c2784f] ${item.isSoldOut ? 'text-slate-500 line-through' : 'text-white'}`}>{item.name}</h3>
+                              <span className="font-bold text-[#e09f7a] text-sm block mt-1">{item.price ? `${item.price} TL` : '-'}</span>
                             </div>
                           </div>
                           
-                          <div className="flex justify-between items-center mt-auto pt-4 border-t border-slate-100">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sıra: {item.order || 999}</span>
+                          <div className="flex justify-between items-center mt-auto pt-3 border-t border-white/10">
+                            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Sıra: {item.order || 999}</span>
                             <div className="flex gap-1.5">
-                              <button type="button" onClick={() => toggleSoldOut(item)} className={`p-2 rounded-xl transition-colors shadow-sm border ${item.isSoldOut ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white border-emerald-100' : 'bg-white text-slate-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 border-slate-200'}`} title={item.isSoldOut ? "Satışa Aç" : "Tükendi Yap"}>
-                                 {item.isSoldOut ? <CheckCircle size={16}/> : <X size={16}/>}
+                              <button type="button" onClick={() => toggleSoldOut(item)} className={`p-2 rounded-xl transition-all shadow-sm border active-press ${item.isSoldOut ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-white/5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 border-white/10'}`} title={item.isSoldOut ? "Satışa Aç" : "Tükendi Yap"}>
+                                 {item.isSoldOut ? <CheckCircle size={15}/> : <X size={15}/>}
                               </button>
-                              <button type="button" onClick={() => duplicateMenuItem(item)} className="p-2 bg-white hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 text-slate-400 border border-slate-200 rounded-xl transition-colors shadow-sm" title="Kopyala">
-                                 <Plus size={16}/>
+                              <button type="button" onClick={() => duplicateMenuItem(item)} className="p-2 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 rounded-xl transition-all shadow-sm active-press" title="Kopyala">
+                                 <Plus size={15}/>
                               </button>
-                              <button type="button" onClick={()=>{setMenuItemData({category: item.category, name: item.name, price: item.price||'', description: item.description||'', image: item.image||'', isFeatured: item.isFeatured||false, order: item.order||999, badges: item.badges||[], isSoldOut: item.isSoldOut||false, prepTime: item.prepTime||'', calories: item.calories||''}); setIsMenuEditing(item.id); window.scrollTo(0,0);}} className="p-2 bg-white hover:bg-[#c2784f]/10 hover:text-[#c2784f] hover:border-[#c2784f]/30 text-slate-400 border border-slate-200 rounded-xl transition-colors shadow-sm" title="Düzenle">
-                                 <Edit2 size={16}/>
+                              <button type="button" onClick={()=>{setMenuItemData({category: item.category, name: item.name, price: item.price||'', description: item.description||'', image: item.image||'', isFeatured: item.isFeatured||false, order: item.order||999, badges: item.badges||[], isSoldOut: item.isSoldOut||false, prepTime: item.prepTime||'', calories: item.calories||''}); setIsMenuEditing(item.id); window.scrollTo({top:0, behavior:'smooth'});}} className="p-2 bg-white/5 hover:bg-[#c2784f]/20 hover:text-[#e09f7a] text-slate-300 border border-white/10 rounded-xl transition-all shadow-sm active-press" title="Düzenle">
+                                 <Edit2 size={15}/>
                               </button>
-                              <button type="button" onClick={()=>{if(window.confirm('Bu ürünü silmek istediğinize emin misiniz?')) executeDelete(item.id, 'menuItems');}} className="p-2 bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-slate-400 border border-slate-200 rounded-xl transition-colors shadow-sm" title="Sil">
-                                 <Trash2 size={16}/>
+                              <button type="button" onClick={()=>{if(window.confirm('Bu ürünü silmek istediğinize emin misiniz?')) executeDelete(item.id, 'menuItems');}} className="p-2 bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 border border-white/10 rounded-xl transition-all shadow-sm active-press" title="Sil">
+                                 <Trash2 size={15}/>
                               </button>
                             </div>
                           </div>
@@ -3096,67 +3211,66 @@ export default function App() {
             </div>
           </div>
         ) : activeAdminTab === 'personel' ? (
+          /* PERSONEL YÖNETİMİ */
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 w-full col-span-12">
             <div className="lg:col-span-4 xl:col-span-3 space-y-6 w-full">
-              <div className={`bg-white rounded-3xl shadow-sm border w-full transition-colors overflow-hidden ${isPersonnelEditing ? 'border-[#c2784f]' : 'border-slate-200'}`}>
-                <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+              <div className={`bg-[#14110e]/95 backdrop-blur-xl rounded-3xl shadow-2xl border w-full transition-colors overflow-hidden ${isPersonnelEditing ? 'border-[#c2784f]' : 'border-white/10'}`}>
+                <div className="px-6 py-5 border-b border-white/10 flex justify-between items-center bg-white/[0.02]">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-xl ${isPersonnelEditing ? 'bg-[#c2784f]/10 text-[#c2784f]' : 'bg-slate-100 text-slate-500'}`}>{isPersonnelEditing ? <Edit2 size={20} /> : <Plus size={20} />}</div>
-                    <h2 className="font-black text-lg text-slate-800">{isPersonnelEditing ? 'Personel Düzenle' : 'Yeni Personel'}</h2>
+                    <div className={`p-2 rounded-xl ${isPersonnelEditing ? 'bg-[#c2784f]/20 text-[#e09f7a]' : 'bg-white/5 text-slate-400'}`}>{isPersonnelEditing ? <Edit2 size={18} /> : <Plus size={18} />}</div>
+                    <h2 className="font-serif font-light text-base sm:text-lg text-white">{isPersonnelEditing ? 'Personel Düzenle' : 'Yeni Personel'}</h2>
                   </div>
-                  {isPersonnelEditing && <button type="button" onClick={()=>{setIsPersonnelEditing(null); setPersonnelData(initialPersonnelState); setPersonnelErrorMsg('');}} className="text-slate-400 p-1.5 hover:bg-slate-100 rounded-full transition-colors"><X size={18}/></button>}
+                  {isPersonnelEditing && <button type="button" onClick={()=>{setIsPersonnelEditing(null); setPersonnelData(initialPersonnelState); setPersonnelErrorMsg('');}} className="text-slate-400 p-1.5 hover:bg-white/10 rounded-full transition-colors"><X size={18}/></button>}
                 </div>
-                <form onSubmit={handlePersonnelSubmit} className="p-6 space-y-5 bg-slate-50/50">
-                  {personnelErrorMsg && <div className="text-red-500 font-bold text-sm bg-red-50 border border-red-100 p-3 rounded-xl flex items-center gap-2"><X size={16}/> {personnelErrorMsg}</div>}
+                <form onSubmit={handlePersonnelSubmit} className="p-6 space-y-4">
+                  {personnelErrorMsg && <div className="text-red-400 font-bold text-xs bg-red-500/10 border border-red-500/20 p-3 rounded-xl flex items-center gap-2"><X size={16}/> {personnelErrorMsg}</div>}
                   
-                  <div className="flex gap-4">
+                  <div className="flex gap-3">
                      <div className="flex-1">
-                        <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Ad *</label>
-                        <input type="text" name="name" value={personnelData.name} onChange={handlePersonnelChange} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white text-slate-800 transition-all" required placeholder="Örn: Ahmet" />
+                        <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Ad *</label>
+                        <input type="text" name="name" value={personnelData.name} onChange={handlePersonnelChange} className="w-full p-3 rounded-xl border border-white/10 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 text-white placeholder-slate-600 transition-all text-sm" required placeholder="Örn: Ahmet" />
                      </div>
                      <div className="flex-1">
-                        <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Soyad *</label>
-                        <input type="text" name="surname" value={personnelData.surname} onChange={handlePersonnelChange} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white text-slate-800 transition-all" required placeholder="Örn: Yılmaz" />
+                        <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Soyad *</label>
+                        <input type="text" name="surname" value={personnelData.surname} onChange={handlePersonnelChange} className="w-full p-3 rounded-xl border border-white/10 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 text-white placeholder-slate-600 transition-all text-sm" required placeholder="Örn: Yılmaz" />
                      </div>
                   </div>
                   
                   <div>
-                    <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Lakap (Opsiyonel)</label>
-                    <input type="text" name="nickname" value={personnelData.nickname} onChange={handlePersonnelChange} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white text-slate-800 transition-all" placeholder="Örn: Hızlı Şef" />
+                    <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Lakap (Opsiyonel)</label>
+                    <input type="text" name="nickname" value={personnelData.nickname} onChange={handlePersonnelChange} className="w-full p-3 rounded-xl border border-white/10 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 text-white placeholder-slate-600 transition-all text-sm" placeholder="Örn: Hızlı Şef" />
                   </div>
                   
                   <div>
-                    <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Yetenekler & Uzmanlık</label>
-                    <textarea name="skills" value={personnelData.skills} onChange={handlePersonnelChange} rows={3} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-medium resize-y focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white text-slate-800 transition-all" placeholder="Örn: Dünya mutfağında 10 yıllık deneyim..."></textarea>
+                    <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Yetenekler & Uzmanlık</label>
+                    <textarea name="skills" value={personnelData.skills} onChange={handlePersonnelChange} rows={3} className="w-full p-3 rounded-xl border border-white/10 shadow-sm font-medium resize-y focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 text-white placeholder-slate-600 transition-all text-xs" placeholder="Örn: Dünya mutfağında 10 yıllık deneyim..."></textarea>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4 items-center">
+                  <div className="grid grid-cols-2 gap-3 items-center">
                     <div>
-                      <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Fotoğraf</label>
-                      <div className="flex items-center gap-2">
-                        <label className="flex items-center justify-center px-4 py-3 bg-white border border-slate-200 shadow-sm rounded-xl cursor-pointer hover:bg-slate-50 transition-colors text-xs font-bold text-slate-700 w-full text-center">
-                          {uploadingPersonnelImage ? <Loader2 className="animate-spin mr-2" size={16} /> : <UploadCloud className="mr-2 text-[#c2784f]" size={16} />}
-                          Dosya Seç
-                          <input type="file" accept="image/*" onChange={handlePersonnelImageUpload} className="hidden" disabled={uploadingPersonnelImage} />
-                        </label>
-                      </div>
+                      <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Fotoğraf</label>
+                      <label className="flex items-center justify-center px-3 py-2.5 bg-white/5 border border-white/10 shadow-sm rounded-xl cursor-pointer hover:bg-white/10 transition-colors text-xs font-bold text-slate-300 w-full text-center">
+                        {uploadingPersonnelImage ? <Loader2 className="animate-spin mr-2" size={15} /> : <UploadCloud className="mr-2 text-[#c2784f]" size={15} />}
+                        Dosya Seç
+                        <input type="file" accept="image/*" onChange={handlePersonnelImageUpload} className="hidden" disabled={uploadingPersonnelImage} />
+                      </label>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">Sıra</label>
-                      <input type="number" name="order" value={personnelData.order} onChange={handlePersonnelChange} className="w-full p-3 rounded-xl border border-slate-200 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white text-slate-800 transition-all" placeholder="999" />
+                      <label className="block text-[10px] font-black text-[#c2784f] mb-1.5 uppercase tracking-widest">Sıra</label>
+                      <input type="number" name="order" value={personnelData.order} onChange={handlePersonnelChange} className="w-full p-2.5 rounded-xl border border-white/10 shadow-sm font-bold focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] outline-none bg-white/5 text-white transition-all text-sm" placeholder="999" />
                     </div>
                   </div>
                   
                   {personnelData.image && (
-                     <div className="relative inline-block mt-2">
-                        <img src={personnelData.image} alt="Preview" className="h-24 w-24 rounded-full object-cover border-2 border-slate-200 shadow-sm bg-slate-50" />
-                        <button type="button" onClick={removePersonnelImage} className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-md transition-colors" title="Resmi Kaldır">
+                     <div className="relative inline-block mt-1">
+                        <img src={personnelData.image} alt="Preview" className="h-20 w-20 rounded-full object-cover border-2 border-[#c2784f]/40 shadow-sm bg-black/40" />
+                        <button type="button" onClick={removePersonnelImage} className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-md transition-colors" title="Resmi Kaldır">
                            <X size={12}/>
                         </button>
                      </div>
                   )}
                   
-                  <button type="submit" className="w-full bg-[#c2784f] hover:bg-[#a16241] text-white font-black py-4 rounded-xl shadow-lg transition-transform hover:-translate-y-1 uppercase tracking-widest mt-6">
+                  <button type="submit" className="w-full btn-premium text-white font-black py-3.5 rounded-xl shadow-lg transition-transform hover:-translate-y-0.5 uppercase tracking-widest text-xs mt-3 active-press">
                     {isPersonnelEditing ? 'Güncelle' : 'Personel Ekle'}
                   </button>
                 </form>
@@ -3164,38 +3278,38 @@ export default function App() {
             </div>
 
             <div className="lg:col-span-8 xl:col-span-9 w-full">
-               <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-8 min-h-[500px] w-full">
-                  <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-8 pb-4 border-b border-slate-100 gap-4">
-                     <h2 className="text-2xl font-black flex items-center gap-3 text-slate-800 tracking-wide"><Users className="text-[#c2784f]" size={28} /> Ekibimiz ({personnelList.length})</h2>
+               <div className="bg-[#14110e]/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-5 sm:p-8 min-h-[500px] w-full">
+                  <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-8 pb-4 border-b border-white/10 gap-4">
+                     <h2 className="text-xl sm:text-2xl font-serif font-light flex items-center gap-3 text-white tracking-wide"><Users className="text-[#c2784f]" size={26} /> Ekibimiz ({personnelList.length})</h2>
                   </div>
                   
                   {personnelList.length === 0 ? (
-                     <div className="text-center py-16 text-slate-400 flex flex-col items-center"><Users size={48} className="mb-4 opacity-30 text-slate-400" /><p className="font-light font-serif text-2xl tracking-wide">Henüz personel eklenmedi.</p><span className="text-sm mt-2">Sol taraftan kayıt oluşturabilirsiniz.</span></div>
+                     <div className="text-center py-16 text-slate-400 flex flex-col items-center"><Users size={48} className="mb-4 opacity-30 text-[#c2784f]" /><p className="font-serif font-light text-2xl text-white tracking-wide">Henüz personel eklenmedi.</p><span className="text-xs text-slate-400 mt-2">Sol taraftan kayıt oluşturabilirsiniz.</span></div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                        {personnelList.sort((a,b) => (a.order||999) - (b.order||999)).map((person) => {
                          const avg = person.reviews?.length > 0 ? (person.reviews.reduce((acc,curr)=>acc+curr.rating,0)/person.reviews.length).toFixed(1) : 0;
                          return (
-                           <div key={person.id} className={`border p-6 rounded-2xl flex flex-col bg-white hover:shadow-md transition-shadow relative shadow-sm group ${isPersonnelEditing === person.id ? 'border-[#c2784f] shadow-lg scale-[1.02]' : 'border-slate-200 hover:border-[#c2784f]/50'}`}>
+                           <div key={person.id} className={`border p-6 rounded-2xl flex flex-col bg-[#1a1613] hover:shadow-xl transition-all relative shadow-md group ${isPersonnelEditing === person.id ? 'border-[#c2784f] shadow-[0_0_25px_rgba(194,120,79,0.3)] scale-[1.02]' : 'border-white/10 hover:border-[#c2784f]/50'}`}>
                               <div className="flex gap-4 items-start mb-4">
-                                <div className="w-16 h-16 rounded-full bg-slate-50 shrink-0 overflow-hidden border border-slate-200 shadow-sm">
-                                  {person.image ? <img src={person.image} className="w-full h-full object-cover" alt={person.name} /> : <UserSquare size={40} className="w-full h-full p-3 text-slate-300" />}
+                                <div className="w-16 h-16 rounded-full bg-black/40 shrink-0 overflow-hidden border border-white/15 shadow-sm">
+                                  {person.image ? <img src={person.image} className="w-full h-full object-cover" alt={person.name} /> : <UserSquare size={36} className="w-full h-full p-3 text-slate-500" />}
                                 </div>
                                 <div>
-                                  <h3 className="font-bold text-slate-800 text-lg leading-none mb-1 group-hover:text-[#c2784f] transition-colors">{person.name} {person.surname}</h3>
-                                  {person.nickname && <p className="text-[#c2784f] font-black text-[10px] tracking-widest uppercase mt-1">"{person.nickname}"</p>}
-                                  <span className="text-[10px] font-bold text-slate-400 block mt-2 uppercase tracking-widest">
+                                  <h3 className="font-serif font-bold text-white text-lg leading-none mb-1 group-hover:text-[#c2784f] transition-colors">{person.name} {person.surname}</h3>
+                                  {person.nickname && <p className="text-[#e09f7a] font-serif italic text-xs tracking-wide mt-1">"{person.nickname}"</p>}
+                                  <span className="text-[10px] font-mono text-slate-400 block mt-2 uppercase tracking-widest">
                                      Sıra: {person.order || 999} • <Star size={10} className="inline fill-[#c2784f] text-[#c2784f] -mt-0.5 ml-1"/> {avg} ({person.reviews?.length || 0} Yorum)
                                   </span>
                                 </div>
                               </div>
                               {person.skills && (
-                                <p className="text-[11px] text-slate-600 line-clamp-2 mb-5 italic font-medium leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">{person.skills}</p>
+                                <p className="text-[11px] text-slate-300 line-clamp-2 mb-5 italic font-light leading-relaxed bg-white/5 p-3 rounded-xl border border-white/5">{person.skills}</p>
                               )}
-                              <div className="flex justify-end gap-2 mt-auto pt-4 border-t border-slate-100">
-                                <button type="button" onClick={() => setManagingReviewsFor(person)} className="p-2 bg-blue-50 hover:bg-blue-500 hover:text-white text-blue-500 border border-blue-100 rounded-xl transition-colors font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 flex-1 shadow-sm"><MessageSquareText size={14}/> Yorumlar ({person.reviews?.length || 0})</button>
-                                <button type="button" onClick={()=>{setPersonnelData({name: person.name, surname: person.surname, nickname: person.nickname||'', skills: person.skills||'', image: person.image||'', order: person.order||'', reviews: person.reviews||[]}); setIsPersonnelEditing(person.id); window.scrollTo(0,0);}} className="p-2 bg-white hover:bg-[#c2784f] hover:text-white hover:border-[#c2784f] border border-slate-200 text-slate-400 rounded-xl transition-colors flex items-center justify-center shadow-sm"><Edit2 size={16}/></button>
-                                <button type="button" onClick={() => setPersonnelDeleteConfirmId(person.id)} className="p-2 bg-white hover:bg-red-500 hover:text-white hover:border-red-500 border border-slate-200 text-slate-400 rounded-xl transition-colors flex items-center justify-center shadow-sm"><Trash2 size={16}/></button>
+                              <div className="flex justify-end gap-2 mt-auto pt-4 border-t border-white/10">
+                                <button type="button" onClick={() => setManagingReviewsFor(person)} className="p-2 bg-blue-500/15 hover:bg-blue-600 text-blue-300 hover:text-white border border-blue-500/30 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 flex-1 shadow-sm active-press"><MessageSquareText size={14}/> Yorumlar ({person.reviews?.length || 0})</button>
+                                <button type="button" onClick={()=>{setPersonnelData({name: person.name, surname: person.surname, nickname: person.nickname||'', skills: person.skills||'', image: person.image||'', order: person.order||'', reviews: person.reviews||[]}); setIsPersonnelEditing(person.id); window.scrollTo({top:0, behavior:'smooth'});}} className="p-2 bg-white/5 hover:bg-[#c2784f] hover:text-white border border-white/10 text-slate-300 rounded-xl transition-all flex items-center justify-center shadow-sm active-press"><Edit2 size={15}/></button>
+                                <button type="button" onClick={() => setPersonnelDeleteConfirmId(person.id)} className="p-2 bg-white/5 hover:bg-red-500 hover:text-white border border-white/10 text-slate-400 rounded-xl transition-all flex items-center justify-center shadow-sm active-press"><Trash2 size={15}/></button>
                               </div>
                            </div>
                          );
@@ -3206,25 +3320,26 @@ export default function App() {
             </div>
           </div>
         ) : activeAdminTab === 'gecmis' ? (
-          <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-slate-200 w-full min-h-[500px]">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-8 pb-4 border-b border-slate-100 gap-4">
-               <h2 className="text-2xl font-black text-slate-800 flex items-center gap-3 tracking-wide"><History className="text-[#c2784f]" size={28}/> Geçmiş Kayıtlar</h2>
-               <div className="flex gap-2 w-full md:w-auto"><input type="date" value={historyDateFilter} onChange={(e)=>setHistoryDateFilter(e.target.value)} className="p-3 w-full md:w-auto border border-slate-200 shadow-sm rounded-xl outline-none font-bold text-sm focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all bg-slate-50 text-slate-800" /></div>
+          /* GEÇMİŞ KAYITLAR */
+          <div className="bg-[#14110e]/95 backdrop-blur-xl rounded-3xl p-5 sm:p-8 shadow-2xl border border-white/10 w-full min-h-[500px]">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-4 border-b border-white/10 gap-4">
+               <h2 className="text-xl sm:text-2xl font-serif font-light text-white flex items-center gap-3 tracking-wide"><History className="text-[#c2784f]" size={26}/> Geçmiş Rezervasyon Kayıtları</h2>
+               <div className="flex gap-2 w-full md:w-auto"><input type="date" value={historyDateFilter} onChange={(e)=>setHistoryDateFilter(e.target.value)} className="p-2.5 w-full md:w-auto border border-white/10 shadow-sm rounded-xl outline-none font-bold text-xs focus:border-[#c2784f] focus:ring-1 focus:ring-[#c2784f] transition-all bg-white/5 text-white [color-scheme:dark]" /></div>
             </div>
             
             {historyStats.list.length === 0 ? (
-               <div className="py-16 text-center text-slate-400 flex flex-col items-center"><History size={48} className="mb-4 opacity-30 text-slate-400" /><p className="font-light font-serif text-2xl tracking-wide">Kayıt bulunamadı.</p></div>
+               <div className="py-16 text-center text-slate-400 flex flex-col items-center"><History size={48} className="mb-4 opacity-30 text-[#c2784f]" /><p className="font-serif font-light text-2xl text-white tracking-wide">Kayıt bulunamadı.</p></div>
             ) : (
-            <div className="overflow-x-auto w-full border border-slate-100 rounded-2xl shadow-sm">
-              <table className="w-full text-left bg-white">
-                 <thead><tr className="border-b border-slate-200 bg-slate-50"><th className="py-4 px-4 font-black text-[10px] text-slate-500 uppercase tracking-widest">Tarih</th><th className="py-4 px-4 font-black text-[10px] text-slate-500 uppercase tracking-widest">Müşteri</th><th className="py-4 px-4 font-black text-[10px] text-slate-500 uppercase tracking-widest text-center">Kişi</th><th className="py-4 px-4 font-black text-[10px] text-slate-500 uppercase tracking-widest text-center">Durum</th></tr></thead>
+            <div className="overflow-x-auto w-full border border-white/10 rounded-2xl shadow-sm">
+              <table className="w-full text-left">
+                 <thead><tr className="border-b border-white/10 bg-white/5"><th className="py-3.5 px-4 font-black text-[10px] text-[#c2784f] uppercase tracking-widest">Tarih</th><th className="py-3.5 px-4 font-black text-[10px] text-[#c2784f] uppercase tracking-widest">Müşteri</th><th className="py-3.5 px-4 font-black text-[10px] text-[#c2784f] uppercase tracking-widest text-center">Kişi</th><th className="py-3.5 px-4 font-black text-[10px] text-[#c2784f] uppercase tracking-widest text-center">Durum</th></tr></thead>
                  <tbody>
                     {historyStats.list.map((res, i) => (
-                       <tr key={res.id} className={`border-b border-slate-100 hover:bg-slate-50 transition-colors ${i%2===0 ? 'bg-white' : 'bg-slate-50/50'}`}>
-                          <td className="py-4 px-4 font-bold text-slate-700 text-sm">{res.date} <span className="text-[9px] uppercase tracking-widest bg-slate-200 text-slate-600 px-2 py-1 rounded-md ml-2 font-black">{res.eventType}</span></td>
-                          <td className="py-4 px-4 font-bold text-slate-800 text-sm">{res.name} <span className="block text-[11px] font-medium text-slate-500 tracking-widest mt-1">{res.phone}</span></td>
-                          <td className="py-4 px-4 text-center font-black text-slate-700">{res.peopleCount}</td>
-                          <td className="py-4 px-4 text-center">{res.isArrived ? <span className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg shadow-sm">Geldi</span> : <span className="bg-white border border-slate-200 shadow-sm text-slate-400 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg">Gelmedi</span>}</td>
+                       <tr key={res.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${i%2===0 ? 'bg-transparent' : 'bg-white/[0.02]'}`}>
+                          <td className="py-3.5 px-4 font-bold text-slate-200 text-xs sm:text-sm">{res.date} <span className="text-[9px] uppercase tracking-widest bg-white/10 text-[#e09f7a] px-2 py-0.5 rounded-md ml-2 font-black border border-white/10">{res.eventType}</span></td>
+                          <td className="py-3.5 px-4 font-bold text-white text-xs sm:text-sm">{res.name} <span className="block text-[11px] font-mono text-slate-400 tracking-wider mt-0.5">{res.phone}</span></td>
+                          <td className="py-3.5 px-4 text-center font-black text-slate-200 text-sm">{res.peopleCount}</td>
+                          <td className="py-3.5 px-4 text-center">{res.isArrived ? <span className="bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg shadow-sm">Geldi</span> : <span className="bg-white/5 border border-white/10 shadow-sm text-slate-400 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg">Gelmedi</span>}</td>
                        </tr>
                     ))}
                  </tbody>
@@ -3234,6 +3349,59 @@ export default function App() {
           </div>
         ) : null}
       </main>
+
+      {/* MOBİL YÖNETİM ALTTAN ERİŞİM DOCKU (1-THUMB APP DOCK) */}
+      <aside className="fixed bottom-3 left-3 right-3 z-40 md:hidden print:hidden" aria-label="Mobil Yönetim Menüsü">
+        <nav className="bg-[#0e0c0a]/95 backdrop-blur-2xl border border-white/15 rounded-2xl shadow-[0_10px_35px_rgba(0,0,0,0.85)] p-1.5 flex items-center justify-around pb-safe">
+          <button 
+            onClick={() => { setActiveAdminTab('talepler'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className={`relative flex flex-col items-center justify-center p-2 rounded-xl transition-all ${activeAdminTab === 'talepler' ? 'text-emerald-400 bg-emerald-500/15' : 'text-slate-400 hover:text-white'}`}
+          >
+            <Inbox size={18} />
+            <span className="text-[10px] font-bold tracking-tight mt-0.5">Talepler</span>
+            {pendingRequests.length > 0 && (
+              <span className="absolute -top-1 right-1 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-black animate-pulse border border-white/30">
+                {pendingRequests.length}
+              </span>
+            )}
+          </button>
+          <button 
+            onClick={() => { setActiveAdminTab('restoran'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all ${activeAdminTab === 'restoran' ? 'text-[#e09f7a] bg-[#c2784f]/20' : 'text-slate-400 hover:text-white'}`}
+          >
+            <UtensilsCrossed size={18} />
+            <span className="text-[10px] font-bold tracking-tight mt-0.5">Restoran</span>
+          </button>
+          <button 
+            onClick={() => { setActiveAdminTab('mac'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all ${activeAdminTab === 'mac' ? 'text-blue-400 bg-blue-500/20' : 'text-slate-400 hover:text-white'}`}
+          >
+            <MonitorPlay size={18} />
+            <span className="text-[10px] font-bold tracking-tight mt-0.5">Maç</span>
+          </button>
+          <button 
+            onClick={() => { setActiveAdminTab('menu'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all ${activeAdminTab === 'menu' ? 'text-[#e09f7a] bg-[#c2784f]/20' : 'text-slate-400 hover:text-white'}`}
+          >
+            <MenuSquare size={18} />
+            <span className="text-[10px] font-bold tracking-tight mt-0.5">Menü</span>
+          </button>
+          <button 
+            onClick={() => { setActiveAdminTab('personel'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all ${activeAdminTab === 'personel' ? 'text-[#e09f7a] bg-[#c2784f]/20' : 'text-slate-400 hover:text-white'}`}
+          >
+            <Users size={18} />
+            <span className="text-[10px] font-bold tracking-tight mt-0.5">Personel</span>
+          </button>
+          <button 
+            onClick={() => { setActiveAdminTab('gecmis'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all ${activeAdminTab === 'gecmis' ? 'text-white bg-white/20' : 'text-slate-400 hover:text-white'}`}
+          >
+            <History size={18} />
+            <span className="text-[10px] font-bold tracking-tight mt-0.5">Geçmiş</span>
+          </button>
+        </nav>
+      </aside>
       
       {renderModals()}
     </div>
